@@ -30,7 +30,6 @@ function init(){
 	rightArrowDown=false;
 	leftArrowDown=false;
 	c= document.getElementById("canvas0");
-	c.addEventListener("click",click);
 	var body=document.getElementById("body");
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
@@ -110,7 +109,7 @@ function draw(){
 		g.font="bold 20px Courier New";
 		g.fillText("score: "+map.score,wid/2,hei/2+40);
 		g.fillText("best : "+best,wid/2,hei/2+65);
-		g.fillText("Click to start again!",wid/2,hei-40);
+		g.fillText("Hit any key to start again!",wid/2,hei-40);
 	}
 }
 
@@ -154,12 +153,6 @@ function updateAll(){
 	updateSideFlame();
 }
 
-/* function rotater(){
-	ship.angle+=0.05;
-	ship.updateVertices();
-	draw();
-} */
-
 function keyDown(e){
 	////console.log("key down. code="+e.keyCode);
 	//left arrow: -ve side thrust
@@ -180,6 +173,17 @@ function keyDown(e){
 	else if(e.keyCode==40){
 		mainPwr=0;
 	}
+	
+	if(!map.alive){
+		map=new Map(wid,hei);
+		mainPwr=0;
+		sidePwr=0;
+		upArrowDown=false;
+		rightArrowDown=false;
+		leftArrowDown=false;
+		updateAll();
+		draw();
+	}
 }
 
 function keyUp(e){
@@ -199,20 +203,6 @@ function keyUp(e){
 	//down arrow
 	else if(e.keyCode==40){
 		
-	}
-}
-
-function click(){
-	console.log("clicked");
-	if(!map.alive){
-		map=new Map(wid,hei);
-		mainPwr=0;
-		sidePwr=0;
-		upArrowDown=false;
-		rightArrowDown=false;
-		leftArrowDown=false;
-		updateAll();
-		draw();
 	}
 }
 
