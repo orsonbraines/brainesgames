@@ -13,14 +13,16 @@ var mainPwr,sidePwr;
 
 function init(){
 	console.log("initialising");
-	if(!navigator.cookieEnabled || document.cookie.search("best=")==-1){
+	if(!navigator.cookieEnabled || document.cookie.search("high=")==-1){
 		best=0;
 	}
 	else{
 		var str=document.cookie.toString();
-		best=Number(str.substring(5));
+		//console.log(str);
+		//console.log(str.substring(str.search("high=")+5).split(";")[0]);
+		best=Number(str.substring(str.search("high=")+5).split(";")[0]);
+		if(isNaN(best)) best=0;
 	}
-
 	wid=500;
 	hei=500;
 	map=new Map(wid,hei);
@@ -109,7 +111,7 @@ function draw(){
 		g.font="bold 20px Courier New";
 		g.fillText("score: "+map.score,wid/2,hei/2+40);
 		g.fillText("best : "+best,wid/2,hei/2+65);
-		g.fillText("Hit any key to start again!",wid/2,hei-40);
+		g.fillText("Hit Enter to start again!",wid/2,hei-40);
 	}
 }
 
@@ -158,6 +160,7 @@ function keyDown(e){
 	//left arrow: -ve side thrust
 	if(e.keyCode==37){
 		leftArrowDown=true;
+		rightArrowDown=false;
 		if(sidePwr>0) sidePwr=0;
 	}
 	//up arrow
@@ -167,14 +170,16 @@ function keyDown(e){
 	//right arrow: +ve side thrust
 	else if(e.keyCode==39){
 		rightArrowDown=true;
+		leftArrowDown=false;
 		if(sidePwr<0) sidePwr=0;
 	}
 	//down arrow
 	else if(e.keyCode==40){
 		mainPwr=0;
+		upArrowDown=false;
 	}
 	
-	if(!map.alive){
+	else if(e.keyCode==13 && !map.alive){
 		map=new Map(wid,hei);
 		mainPwr=0;
 		sidePwr=0;
@@ -209,6 +214,12 @@ function keyUp(e){
 function gameLoop(){
 	//update power
 	if(map.alive){
+		if(!document.hasFocus()){
+			upArrowDown=false;
+			rightArrowDown=false;
+			leftArrowDown=false;
+		}
+		
 		if(upArrowDown && mainPwr<10) mainPwr++;
 		else if (!upArrowDown && mainPwr>0) mainPwr--;
 		if(rightArrowDown && sidePwr<10) sidePwr++;
@@ -224,7 +235,7 @@ function gameLoop(){
 	if(map.score>best){
 		best=map.score;
 		if(navigator.cookieEnabled){
-			document.cookie="best="+best+"; expires=Thu, 18 Dec 2023 12:00:00 UTC";
+			document.cookie="high="+best+"; expires=Thu, 18 Dec 2033 12:00:00 UTC; path=/";
 		}
 	}
 	draw();
