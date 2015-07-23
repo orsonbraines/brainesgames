@@ -23,15 +23,22 @@ function init(){
 		best=Number(str.substring(str.search("high=")+5).split(";")[0]);
 		if(isNaN(best)) best=0;
 	}
-	wid=500;
-	hei=500;
-	map=new Map(wid,hei);
+
 	mainPwr=0;
 	sidePwr=0;
 	upArrowDown=false;
 	rightArrowDown=false;
 	leftArrowDown=false;
 	c= document.getElementById("canvas0");
+	
+	c.width=window.innerWidth-50;
+	c.height=window.innerHeight-50;
+	
+	console.log(window.innerWidth);
+	console.log(window.innerHeight);
+	wid=c.width;
+	hei=c.height;
+	map=new Map(wid,hei);
 	var body=document.getElementById("body");
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
@@ -85,21 +92,21 @@ function draw(){
 		g.fillText("best : "+best,5,20);
 		//draw power meters
 		g.fillStyle="#999999";
-		g.fillRect(410,470,80,20);
-		g.fillRect(440,380,20,80);
+		g.fillRect(wid-90,hei-30,80,20);
+		g.fillRect(wid-60,hei-120,20,80);
 		g.strokeStyle= "#000000";
 		g.lineWidth=(3);
-		g.strokeRect(410,470,80,20);
-		g.strokeRect(440,380,20,80);
+		g.strokeRect(wid-90,hei-30,80,20);
+		g.strokeRect(wid-60,hei-120,20,80);
 		g.beginPath();
-		g.moveTo(450,470);
-		g.lineTo(450,490);
+		g.moveTo(wid-50,hei-30);
+		g.lineTo(wid-50,hei-10);
 		g.stroke();
 		//fill in power meters
 		g.fillStyle="#FF0000";
-		g.fillRect(440,380,20,mainPwr*8);
-		if(sidePwr>=0)g.fillRect(450,470,sidePwr*4,20);
-		else g.fillRect(450+sidePwr*4,470,sidePwr*-4,20);
+		g.fillRect(wid-60,hei-120,20,mainPwr*8);
+		if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
+		else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
 	}
 	else{
 		//game over screen

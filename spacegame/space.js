@@ -80,7 +80,7 @@ function Map(w,h){
 	this.score=0;
 	this.ship=new Ship(w/2,h/2);
 	this.alive=true;
-	this.asteroids=new Array(5);
+	this.asteroids=new Array(Math.ceil(w*h/60000));
 
 	
 	for(var i=0;i<this.asteroids.length;i++){

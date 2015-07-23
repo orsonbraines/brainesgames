@@ -196,7 +196,6 @@ Geometry Section
 		//temporary  simple solution to 'bounce' the circles off each other
 		v1.add(scaleVector(u1,0.5*(m1+m2)/m1));
 		v2.add(scaleVector(u2,0.5*(m1+m2)/m2));	
-		
 /* 		console.log("after");
 		console.log("cos angle 1:"+(dotProduct(d1,v1)/(d1.magnitude*v1.magnitude)));
 		console.log("cos angle 2:"+(dotProduct(d2,v2)/(d2.magnitude*v2.magnitude))); */
