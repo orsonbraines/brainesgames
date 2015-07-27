@@ -46,7 +46,7 @@ function init(){
 	updateAll();
 	draw();
 	//setInterval("rotater()",25);
-	setInterval("gameLoop()",100);
+	setInterval("gameLoop()",50);
 }
 
 function draw(){
