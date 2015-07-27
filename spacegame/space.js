@@ -93,8 +93,15 @@ Map.prototype.move=function(){
 	this.ship.move(1);
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
-		for(var j=0;j<5;j++){
-			if(obrengine.intersects(this.asteroids[i].shape,this.ship.sides[j]))this.alive=false;
+		
+		if(obrengine.subtractVectors(this.asteroids[i].shape.center,this.ship.pos).magnitude<
+		this.ship.len + this.asteroids[i].shape.radius){
+			for(var j=0;j<5;j++){
+				if(obrengine.intersects(this.asteroids[i].shape,this.ship.sides[j])){
+					this.alive=false;
+					break;
+				}
+			}
 		}
 		
 		if(!this.inBounds(this.asteroids[i])) this.asteroids[i]=this.generateAsteroid();

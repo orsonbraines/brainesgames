@@ -118,23 +118,8 @@ Geometry Section
 
 	//intersection tester
 	obrengine.intersects=function (obj1,obj2){
-		if(obj1 instanceof Line && obj2 instanceof Line){
-			if(obj1.p1.x==obj1.p2.x || obj2.p1.x==obj2.p2.x){
-				if(obj1.p1.x==obj1.p2.x && obj2.p1.x==obj2.p2.x)return false;
-				var la,lb;
-				if(obj1.p1.x==obj1.p2.x) {lb=obj1;la=obj2;}
-				else {lb=obj2;la=obj1;}
-				
-				var yint=la.slope*(lb.p1.x-la.p1.x)+la.p1.y;
-				return (la.p1.x<lb.p1.x && lb.p1.x<la.p2.x) && (lb.p1.y<yint && yint<lb.p2.y);
-			}
-			else{
-				var la=obj1;
-				var lb=obj2;
-				var xint=(la.slope*la.p1.x + lb.p1.y - lb.slope*lb.p1.x -la.p1.y)/(la.slope-lb.slope);
-				console.log("xint: "+xint);
-				return la.p1.x<xint && xint<la.p2.x && lb.p1.x<xint && xint<lb.p2.x;
-			}
+		if (obj1 instanceof Circle && obj2 instanceof Circle){
+			return (subtractVectors(obj1.center,obj2.center).magnitude < obj1.radius + obj2.radius);
 		}
 		else if(obj1 instanceof Circle && obj2 instanceof Line  || obj2 instanceof Circle && obj1 instanceof Line){
 			var circle,line;
@@ -170,8 +155,23 @@ Geometry Section
 				return (circle.inside(closestPoint) && line.p1.x<closestPoint.x  && closestPoint.x<line.p2.x);
 			}
 		}
-		else if (obj1 instanceof Circle && obj2 instanceof Circle){
-			return (subtractVectors(obj1.center,obj2.center).magnitude < obj1.radius + obj2.radius);
+		else if(obj1 instanceof Line && obj2 instanceof Line){
+			if(obj1.p1.x==obj1.p2.x || obj2.p1.x==obj2.p2.x){
+				if(obj1.p1.x==obj1.p2.x && obj2.p1.x==obj2.p2.x)return false;
+				var la,lb;
+				if(obj1.p1.x==obj1.p2.x) {lb=obj1;la=obj2;}
+				else {lb=obj2;la=obj1;}
+				
+				var yint=la.slope*(lb.p1.x-la.p1.x)+la.p1.y;
+				return (la.p1.x<lb.p1.x && lb.p1.x<la.p2.x) && (lb.p1.y<yint && yint<lb.p2.y);
+			}
+			else{
+				var la=obj1;
+				var lb=obj2;
+				var xint=(la.slope*la.p1.x + lb.p1.y - lb.slope*lb.p1.x -la.p1.y)/(la.slope-lb.slope);
+				console.log("xint: "+xint);
+				return la.p1.x<xint && xint<la.p2.x && lb.p1.x<xint && xint<lb.p2.x;
+			}
 		}
 	}
 	

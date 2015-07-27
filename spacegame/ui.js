@@ -6,10 +6,9 @@ var wid,hei;
 var map;
 var best;
 
-var upArrowDown;
-var rightArrowDown;
-var leftArrowDown;
+var upArrowDown,rightArrowDown,leftArrowDown;
 var mainPwr,sidePwr;
+var paused;
 
 function init(){
 	console.log("initialising");
@@ -29,17 +28,17 @@ function init(){
 	upArrowDown=false;
 	rightArrowDown=false;
 	leftArrowDown=false;
+	paused=false;
 	c= document.getElementById("canvas0");
 	
-	c.width=window.innerWidth-50;
-	c.height=window.innerHeight-50;
-	
+	c.width=window.innerWidth-40;
+	c.height=window.innerHeight-40;
 	console.log(window.innerWidth);
 	console.log(window.innerHeight);
 	wid=c.width;
 	hei=c.height;
 	map=new Map(wid,hei);
-	var body=document.getElementById("body");
+	var body=document.body;
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
 	g=c.getContext("2d");
@@ -107,12 +106,20 @@ function draw(){
 		g.fillRect(wid-60,hei-120,20,mainPwr*8);
 		if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
 		else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
+		//draw paused text
+		if(paused){
+			g.fillStyle = "#000000";
+			g.font="bold 52px Courier New";
+			g.textBaseline="top";
+			g.textAlign="center";
+			g.fillText("PAUSED",wid/2,hei/2);
+		}
 	}
 	else{
 		//game over screen
 		g.fillStyle = "#000000";
 		g.font="bold 42px Courier New";
-		g.textBaseline="center";
+		g.textBaseline="top";
 		g.textAlign="center";
 		g.fillText("GAME OVER!",wid/2,hei/2);
 		g.font="bold 20px Courier New";
@@ -163,7 +170,7 @@ function updateAll(){
 }
 
 function keyDown(e){
-	////console.log("key down. code="+e.keyCode);
+	//console.log("key down. code="+e.keyCode);
 	//left arrow: -ve side thrust
 	if(e.keyCode==37){
 		leftArrowDown=true;
@@ -185,7 +192,7 @@ function keyDown(e){
 		mainPwr=0;
 		upArrowDown=false;
 	}
-	
+	//enter key
 	else if(e.keyCode==13 && !map.alive){
 		map=new Map(wid,hei);
 		mainPwr=0;
@@ -193,8 +200,13 @@ function keyDown(e){
 		upArrowDown=false;
 		rightArrowDown=false;
 		leftArrowDown=false;
+		paused=false;
 		updateAll();
 		draw();
+	}
+	//p
+	else if(e.keyCode==80){
+		paused=!paused;
 	}
 }
 
@@ -220,11 +232,12 @@ function keyUp(e){
 
 function gameLoop(){
 	//update power
-	if(map.alive){
+	if(map.alive && !paused){
 		if(!document.hasFocus()){
 			upArrowDown=false;
 			rightArrowDown=false;
 			leftArrowDown=false;
+			paused=true;
 		}
 		
 		if(upArrowDown && mainPwr<10) mainPwr++;
