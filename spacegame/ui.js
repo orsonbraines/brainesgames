@@ -1,7 +1,7 @@
 console.log("ui.js loaded");
 
-var c; 
-var g;
+var c,g;
+var background,textColour;
 var wid,hei;
 var map;
 var best;
@@ -9,6 +9,8 @@ var best;
 var upArrowDown,rightArrowDown,leftArrowDown;
 var mainPwr,sidePwr;
 var paused;
+
+window.onload=init;
 
 function init(){
 	console.log("initialising");
@@ -29,6 +31,7 @@ function init(){
 	rightArrowDown=false;
 	leftArrowDown=false;
 	paused=false;
+	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	
 	c.width=window.innerWidth-40;
@@ -42,19 +45,33 @@ function init(){
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
 	g=c.getContext("2d");
+	//prepare background
+	g.fillStyle = "#000000";
+	g.fillRect(0,0,wid,hei);
+	for(var i=0;i<Math.ceil(wid*hei/20000);i++){
+		var x=Math.floor(Math.random()*wid);
+		var y=Math.floor(Math.random()*hei);
+		var grd = g.createRadialGradient(x, y, 1, x, y, 4);
+		grd.addColorStop(0, "#ffffff");
+		grd.addColorStop(1, "#000000");
+		g.fillStyle = grd;
+		g.beginPath();
+		g.arc(x,y,4,0,2*Math.PI);
+		g.fill();
+	}
+	background=g.getImageData(0,0,wid,hei);
+	//begin loop
 	updateAll();
 	draw();
-	//setInterval("rotater()",25);
 	setInterval("gameLoop()",50);
 }
 
 function draw(){
 	//draw background
-	g.fillStyle = "#FFFFFF";
-	g.fillRect(0,0,wid,hei);
+	g.putImageData(background,0,0);
 	if(map.alive){
 		//draw ship
-		g.fillStyle = "#FF0000";
+		g.fillStyle = "#ff0000";
 		g.beginPath();
 		g.moveTo(map.ship.vertices[0].x,map.ship.vertices[0].y);
 		for(var i=1;i<5;i++) g.lineTo(map.ship.vertices[i].x,map.ship.vertices[i].y);
@@ -83,7 +100,7 @@ function draw(){
 			g.fill();
 		}
 		//draw score
-		g.fillStyle = "#000000";
+		g.fillStyle = textColour;
 		g.font="bold 16px Courier New";
 		g.textBaseline="top";
 		g.textAlign="left";
@@ -93,22 +110,21 @@ function draw(){
 		g.fillStyle="#999999";
 		g.fillRect(wid-90,hei-30,80,20);
 		g.fillRect(wid-60,hei-120,20,80);
-		g.strokeStyle= "#000000";
+		
+ 		g.strokeStyle= "#000000";
 		g.lineWidth=(3);
-		g.strokeRect(wid-90,hei-30,80,20);
-		g.strokeRect(wid-60,hei-120,20,80);
 		g.beginPath();
 		g.moveTo(wid-50,hei-30);
 		g.lineTo(wid-50,hei-10);
 		g.stroke();
 		//fill in power meters
-		g.fillStyle="#FF0000";
+		g.fillStyle="#ff0000";
 		g.fillRect(wid-60,hei-120,20,mainPwr*8);
 		if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
 		else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
 		//draw paused text
 		if(paused){
-			g.fillStyle = "#000000";
+			g.fillStyle = textColour;
 			g.font="bold 52px Courier New";
 			g.textBaseline="top";
 			g.textAlign="center";
@@ -117,14 +133,16 @@ function draw(){
 	}
 	else{
 		//game over screen
-		g.fillStyle = "#000000";
+		g.fillStyle = textColour;
 		g.font="bold 42px Courier New";
 		g.textBaseline="top";
 		g.textAlign="center";
 		g.fillText("GAME OVER!",wid/2,hei/2);
 		g.font="bold 20px Courier New";
-		g.fillText("score: "+map.score,wid/2,hei/2+40);
-		g.fillText("best : "+best,wid/2,hei/2+65);
+		g.textAlign="left";
+		g.fillText("score: "+map.score,wid/2-75,hei/2+40);
+		g.fillText("best : "+best,wid/2-75,hei/2+65);
+		g.textAlign="center";
 		g.fillText("Hit Enter to start again!",wid/2,hei-40);
 	}
 }
