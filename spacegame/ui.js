@@ -473,7 +473,7 @@ function setPower(){
 		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
-		var sens=3;
+		var sens=1;
 		tstr=delta.toString();
 		mainPwr=(Math.abs(delta.y)/sens>10? 10 : Math.abs(delta.y)/sens);
 		if(delta.x>0){
