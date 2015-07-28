@@ -413,25 +413,19 @@ function setPower(){
 		if(leftArrowDown && sidePwr>-10) sidePwr--;
 		if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
 		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
-		
-		map.ship.pwr=mainPwr/10;
-		map.ship.sidePwr=sidePwr/10;
 	}
-	else if(touchMode){
-		
+	else if(touchMode){	
 		if(controlRect.inside(touchPos)){
 			touchStr=(obrengine.subtractVectors(touchPos,controlRect.corner).y)+"/"+controlRect.size.y;
-			mainPwr=1- (obrengine.subtractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
-			sidePwr=-1 + 2*(obrengine.subtractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
+			mainPwr=10- 10*(obrengine.subtractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
+			sidePwr=-10 + 20*(obrengine.subtractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
 		}
 		else{
 			touchStr="not inside";
 			mainPwr=0;
 			sidePwr=0;
 		}
-		
-		map.ship.pwr=mainPwr;
-		map.ship.sidePwr=sidePwr;
 	}
-
+	map.ship.pwr=mainPwr/10;
+	map.ship.sidePwr=sidePwr/10;
 }
