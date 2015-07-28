@@ -74,8 +74,8 @@ function init(){
 	}
 	background=g.getImageData(0,0,wid,hei);
 	//configure control rect
-	controlRect=new obrengine.Rect(new obrengine.Vector2d(5*hei/100,8*hei/10),
-							new obrengine.Vector2d(15*hei/100,15*hei/100));
+	controlRect=new obrengine.Rect(new obrengine.Vector2d(5*hei/100,7*hei/10),
+							new obrengine.Vector2d(25*hei/100,25*hei/100));
 	//begin loop
 	updateAll();
 	draw();
@@ -417,7 +417,7 @@ function setPower(){
 	else if(touchMode){
 		
 		if(controlRect.inside(touchPos)){
-			touchStr="inside";
+			touchStr=(obrengine.subtractVectors(touchPos,controlRect.corner).y)+"/"+controlRect.size.y;
 			mainPwr=1- (obrengine.subtractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
 			sidePwr=-1 + 2*(obrengine.subtractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
 		}
