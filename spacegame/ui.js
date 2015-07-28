@@ -417,8 +417,9 @@ function setPower(){
 	else if(touchMode){
 		
 		if(controlRect.inside(touchPos)){
-			mainPwr=1- (obrengine.subractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
-			sidePwr=-1 + 2*(obrengine.subractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
+			touchStr="inside";
+			mainPwr=1- (obrengine.subtractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
+			sidePwr=-1 + 2*(obrengine.subtractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
 		}
 		else{
 			touchStr="not inside";
