@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touches,leftRect,rightRect,upRect;
+var touches,leftRect,rightRect,upRect,upRightRect,upLeftRect;
 
 window.onload=init;
 
@@ -80,6 +80,10 @@ function init(){
 						new obrengine.Vector2d(hei/10,hei/10));
 	rightRect=new obrengine.Rect(new obrengine.Vector2d(wid/2+5*hei/100,9*hei/10),
 						new obrengine.Vector2d(hei/10,hei/10));
+	upRightRect=new obrengine.Rect(new obrengine.Vector2d(wid/2+5*hei/100,8*hei/10),
+						new obrengine.Vector2d(hei/10,hei/10));
+	upLeftRect=new obrengine.Rect(new obrengine.Vector2d(wid/2-15*hei/100,8*hei/10),
+						new obrengine.Vector2d(hei/10,hei/10));
 	//begin loop
 	updateAll();
 	draw();
@@ -145,6 +149,10 @@ function drawTouch(){
 	g.strokeRect(leftRect.corner.x,leftRect.corner.y,leftRect.size.x,leftRect.size.y);
 	g.fillRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
 	g.strokeRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
+	g.fillRect(upRightRect.corner.x,upRightRect.corner.y,upRightRect.size.x,upRightRect.size.y);
+	g.strokeRect(upRightRect.corner.x,upRightRect.corner.y,upRightRect.size.x,upRightRect.size.y);
+	g.fillRect(upLeftRect.corner.x,upLeftRect.corner.y,upLeftRect.size.x,upLeftRect.size.y);
+	g.strokeRect(upLeftRect.corner.x,upLeftRect.corner.y,upLeftRect.size.x,upLeftRect.size.y);
 }
 
 function drawGame(){
@@ -433,8 +441,16 @@ function setPower(){
 		var upDown=false;
 		for(var i=0;i<touches.length;i++){
 			if(rightRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) rightDown=true;
-			if(leftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) leftDown=true;
-			if(upRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) upDown=true;
+			else if(leftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) leftDown=true;
+			else if(upRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) upDown=true;
+			else if(upRightRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))){
+				upDown=true;
+				rightDown=true;
+			}
+			else if(upLeftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))){
+				upDown=true;
+				leftDown=true;
+			}
 		}
 
 		if(upDown && mainPwr<10) mainPwr++;
