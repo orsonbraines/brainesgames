@@ -41,8 +41,8 @@ function init(){
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
-	var mwid=document.documentElement.clientWidth-30;
-	var mhei=document.documentElement.clientHeight-30;
+	var mwid=document.documentElement.clientWidth-40;
+	var mhei=document.documentElement.clientHeight-40;
 	if(mwid >= aspect*mhei){
 		c.width=Math.floor(aspect*mhei);
 		c.height=mhei;
@@ -473,13 +473,14 @@ function setPower(){
 		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
+		var sens=3;
 		tstr=delta.toString();
-		mainPwr=(Math.abs(delta.y)/5>10? 10 : Math.abs(delta.y)/5);
+		mainPwr=(Math.abs(delta.y)/sens>10? 10 : Math.abs(delta.y)/sens);
 		if(delta.x>0){
-			sidePwr=(delta.x/5>10? 10 : delta.x/5);
+			sidePwr=(delta.x/sens>10? 10 : delta.x/sens);
 		}
 		else{
-			sidePwr=(delta.x/5<-10? -10 : delta.x/5);
+			sidePwr=(delta.x/sens<-10? -10 : delta.x/sens);
 		}
 		otPos.set(ntPos.x,ntPos.y);
 	}
