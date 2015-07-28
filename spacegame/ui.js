@@ -428,11 +428,13 @@ function setPower(){
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
-		var sens=1;
-		mainPwr=dx/sens;
+		var sens=2;
+		mainPwr=dx-sens;
 		if (mainPwr<0) mainPwr=0;
 		if (mainPwr>10) mainPwr=10;
 		sidePwr=dy/sens;
+		if (sidePwr<-sens) sidePwr+=sens;
+		if (sidePwr>sens) sidePwr-=sens;
 		if (sidePwr<-10) sidePwr=-10;
 		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
