@@ -115,6 +115,21 @@ Geometry Section
 	obrengine.Circle.prototype.toString=function (){
 			return "Circle center: "+this.center+"\tradius: "+this.radius;
 	}
+	
+	//Rect class
+	obrengine.Rect=function(corner,size){
+		this.corner=corner;
+		this.size=size;
+	}
+	
+	obrengine.Rect.prototype.inside=function(p){
+		return p.x>this.corner.x && p.x<this.corner.x+this.size.x &&
+				p.y>this.corner.y && p.y<this.corner.y+this.size.y;
+	}
+	
+	obrengine.Rect.prototype.toString=function (){
+		return "Rect corner: "+this.corner+"\tsize: "+this.size;
+	}
 
 	//intersection tester
 	obrengine.intersects=function (obj1,obj2){

@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touchStr;
+var touchStr,touchX,touchY,controlRect;
 
 window.onload=init;
 
@@ -34,6 +34,8 @@ function init(){
 	setState("title");
 	setMode("");
 	touchStr="no touch events";
+	touchX=0;
+	touchY=0;
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
@@ -56,7 +58,6 @@ function init(){
 	c.addEventListener("touchstart",touchStart);
 	c.addEventListener("touchend",touchEnd);
 	c.addEventListener("touchmove",touchMove);
-	c.addEventListener("touchcancel",touchCancel);
 	g=c.getContext("2d");
 	//prepare background
 	g.fillStyle = "#000000";
@@ -73,6 +74,9 @@ function init(){
 		g.fill();
 	}
 	background=g.getImageData(0,0,wid,hei);
+	//configure control rect
+	controlRect=new obrengine.Rect(new obrengine.Vector(8*hei/10,5*hei/100),
+							new obrengine.Vector(15*hei/100,15*hei/100));
 	//begin loop
 	updateAll();
 	draw();
@@ -82,10 +86,9 @@ function init(){
 function draw(){
 	//draw background
 	g.putImageData(background,0,0);
-	drawTouch();
 	if(inGame){
 		drawGame();
-		//if(touchMode) drawTouch();
+		if(touchMode) drawTouch();
 		
 	}
 	else if (inPause){
@@ -129,6 +132,9 @@ function drawTouch(){
 	g.textBaseline="top";
 	g.textAlign="right";
 	g.fillText(touchStr,wid,0);
+	
+	g.fillStyle="77ffffff";
+	g.fillRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
 }
 
 function drawGame(){
@@ -308,11 +314,9 @@ function touchEnd(e){
 }
 
 function touchMove(e){
-	touchStr=("touch move. x: "+e.changedTouches[0].clientX+"\ty: "+e.changedTouches[0].clientX+"\ty: ");
-}
-
-function touchCancel(e){
-	touchStr=("touch cancel");
+	touchX=e.changedTouches[0].clientX;
+	touchY=e.changedTouches[0].clientY;
+	touchStr=("touch move. x: "+touchX+"\ty: "+touchY+"\ty: ");
 }
 
 function gameLoop(){
