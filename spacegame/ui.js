@@ -413,6 +413,9 @@ function setPower(){
 		if(leftArrowDown && sidePwr>-10) sidePwr--;
 		if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
 		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
+		
+		map.ship.pwr=mainPwr/10;
+		map.ship.sidePwr=sidePwr/10;
 	}
 	else if(touchMode){
 		
@@ -426,7 +429,9 @@ function setPower(){
 			mainPwr=0;
 			sidePwr=0;
 		}
+		
+		map.ship.pwr=mainPwr;
+		map.ship.sidePwr=sidePwr;
 	}
-	map.ship.pwr=mainPwr/10;
-	map.ship.sidePwr=sidePwr/10;
+
 }
