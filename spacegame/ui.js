@@ -2,7 +2,7 @@ console.log("ui.js loaded");
 
 var c,g;
 var background,textColour;
-var wid,hei;
+var wid,hei,aspect;
 var map;
 var best;
 
@@ -33,11 +33,17 @@ function init(){
 	paused=false;
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
-	
-	c.width=window.innerWidth-40;
-	c.height=window.innerHeight-40;
-	console.log(window.innerWidth);
-	console.log(window.innerHeight);
+	aspect=1.8;
+	var mwid=window.innerWidth-40;
+	var mhei=window.innerHeight-40;
+	if(mwid >= aspect*mhei){
+		c.width=Math.floor(aspect*mhei);
+		c.height=mhei;
+	}
+	else{
+		c.width=mwid;
+		c.height=mwid/aspect;
+	}
 	wid=c.width;
 	hei=c.height;
 	map=new Map(wid,hei);
