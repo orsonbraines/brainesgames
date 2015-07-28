@@ -33,7 +33,7 @@ function init(){
 	paused=false;
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
-	aspect=1.8;
+	aspect=1.7;
 	var mwid=window.innerWidth-40;
 	var mhei=window.innerHeight-40;
 	if(mwid >= aspect*mhei){
