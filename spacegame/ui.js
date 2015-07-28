@@ -12,6 +12,7 @@ var mainPwr,sidePwr;
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
 var touches,leftRect,rightRect,upRect,upRightRect,upLeftRect,otPos,ntPos;
+var tstr;
 
 window.onload=init;
 
@@ -34,6 +35,7 @@ function init(){
 	setState("title");
 	setMode("");
 	touches=[];
+	tstr="";
 	ntPos=new obrengine.Vector2d(0,0);
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#0000ff";
@@ -136,11 +138,11 @@ function draw(){
 }
 
 function drawTouch(){
-/* 	g.fillStyle = textColour;
+ 	g.fillStyle = textColour;
 	g.font="bold 16px serif";
 	g.textBaseline="top";
 	g.textAlign="right";
-	g.fillText(touchStr,wid,0); */
+	g.fillText(tstr,wid,0); 
 	
 	g.fillStyle="rgba(255,255,255,0.7)";
 	g.strokeStyle="rgba(0,0,0,0.7)";
@@ -335,7 +337,7 @@ function touchStart(e){
 
 function touchEnd(e){
 	e.preventDefault();
-	ntPos=otPos;
+	ntPos.set(otPos.x,otPos.y);
 	touches=e.touches;
 }
 
@@ -471,6 +473,7 @@ function setPower(){
 		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
+		tstr=delta.toString();
 		mainPwr=(Math.abs(delta.y)/5>10? 10 : Math.abs(delta.y)/5);
 		if(delta.x>0){
 			sidePwr=(delta.x/5>10? 10 : delta.x/5);
@@ -478,6 +481,7 @@ function setPower(){
 		else{
 			sidePwr=(delta.x/5<-10? -10 : delta.x/5);
 		}
+		otPos.set(ntPos.x,ntPos.y);
 	}
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
