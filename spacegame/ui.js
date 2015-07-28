@@ -75,8 +75,8 @@ function init(){
 	}
 	background=g.getImageData(0,0,wid,hei);
 	//configure control rect
-	controlRect=new obrengine.Rect(new obrengine.Vector(8*hei/10,5*hei/100),
-							new obrengine.Vector(15*hei/100,15*hei/100));
+	controlRect=new obrengine.Rect(new obrengine.Vector2d(8*hei/10,5*hei/100),
+							new obrengine.Vector2d(15*hei/100,15*hei/100));
 	//begin loop
 	updateAll();
 	draw();
