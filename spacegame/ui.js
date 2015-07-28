@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touches,leftRect,rightRect,upRect,upRightRect,upLeftRect;
+var touches,leftRect,rightRect,upRect,upRightRect,upLeftRect,otPos,ntPos;
 
 window.onload=init;
 
@@ -34,11 +34,13 @@ function init(){
 	setState("title");
 	setMode("");
 	touches=[];
+	ntPos=new obrengine.Vector2d(0,0);
+	otPos=new obrengine.Vector2d(0,0);
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
-	var mwid=document.documentElement.clientWidth-20;
-	var mhei=document.documentElement.clientHeight-20;
+	var mwid=document.documentElement.clientWidth-30;
+	var mhei=document.documentElement.clientHeight-30;
 	if(mwid >= aspect*mhei){
 		c.width=Math.floor(aspect*mhei);
 		c.height=mhei;
@@ -318,6 +320,8 @@ function keyUp(e){
 
 function touchStart(e){
 	e.preventDefault();
+	otPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
+	ntPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
 	if(inTitle){
 		setState("game");
 		setMode("touch");
@@ -331,12 +335,14 @@ function touchStart(e){
 
 function touchEnd(e){
 	e.preventDefault();
+	ntPos=otPos;
 	touches=e.touches;
 }
 
 function touchMove(e){
 	e.preventDefault();
 	touches=e.touches;
+	ntPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
 }
 
 function touchCancel(e){
@@ -440,7 +446,7 @@ function setPower(){
 		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
 	}
 	else if(touchMode){	
-		var rightDown=false;
+/* 		var rightDown=false;
 		var leftDown=false;
 		var upDown=false;
 		for(var i=0;i<touches.length;i++){
@@ -462,7 +468,16 @@ function setPower(){
 		if(rightDown && sidePwr<10) sidePwr++;
 		if(leftDown && sidePwr>-10) sidePwr--;
 		if(!(rightDown || leftDown) && sidePwr>0) sidePwr--;
-		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++;
+		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
+		
+		var delta=obrengine.subtractVectors(ntPos,otPos);
+		mainPwr=(Math.abs(delta.y)/5>10? 10 : Math.abs(delta.y)/5);
+		if(delta.x>0){
+			sidePwr=(delta.x/5>10? 10 : delta.x/5);
+		}
+		else{
+			sidePwr=(delta.x/5<-10? -10 : delta.x/5);
+		}
 	}
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
