@@ -108,7 +108,8 @@ function draw(){
 		g.fillText("score: "+map.score,wid/2-75,hei/2+40);
 		g.fillText("best : "+best,wid/2-75,hei/2+65);
 		g.textAlign="center";
-		g.fillText("Hit Enter to start again!",wid/2,hei-40);
+		if(keyMode)g.fillText("Hit Enter to start again!",wid/2,hei-40);
+		else if(touchMode) g.fillText("Touch the screen to start again!",wid/2,hei-40);
 	}
 	else if (inTitle){
 		g.fillStyle = textColour;
@@ -307,7 +308,7 @@ function touchEnd(e){
 }
 
 function touchMove(e){
-	touchStr=("touch move");
+	touchStr=("touch move. x: "+e.changedTouches[0].clientX+"\ty: "+e.changedTouches[0].clientX+"\ty: ");
 }
 
 function touchCancel(e){
@@ -328,12 +329,17 @@ function gameLoop(){
 			setState("end");
 		}
 		
-		if(upArrowDown && mainPwr<10) mainPwr++;
-		else if (!upArrowDown && mainPwr>0) mainPwr--;
-		if(rightArrowDown && sidePwr<10) sidePwr++;
-		if(leftArrowDown && sidePwr>-10) sidePwr--;
-		if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
-		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
+		if(keyMode){
+			if(upArrowDown && mainPwr<10) mainPwr++;
+			else if (!upArrowDown && mainPwr>0) mainPwr--;
+			if(rightArrowDown && sidePwr<10) sidePwr++;
+			if(leftArrowDown && sidePwr>-10) sidePwr--;
+			if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
+			else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
+		}
+		else if(touchMode){
+			
+		}
 		//move ship
 		map.ship.pwr=mainPwr/10;
 		map.ship.sidePwr=sidePwr/10;
