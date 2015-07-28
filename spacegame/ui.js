@@ -333,6 +333,7 @@ function touchEnd(e){
 }
 
 function touchMove(e){
+	e.preventDefault();
 	touches=e.touches;
 }
 
