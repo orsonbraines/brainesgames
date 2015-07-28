@@ -74,11 +74,11 @@ function init(){
 	}
 	background=g.getImageData(0,0,wid,hei);
 	//configure control rect
-	upRect=new obrengine.Rect(new obrengine.Vector2d(45*hei/100,7*hei/10),
+	upRect=new obrengine.Rect(new obrengine.Vector2d(wid/2-hei/5,8*hei/10),
 							new obrengine.Vector2d(hei/10,hei/10));
-	leftRect=new obrengine.Rect(new obrengine.Vector2d(3*hei/10,85*hei/100),
+	leftRect=new obrengine.Rect(new obrengine.Vector2d(wid/2-3*hei/5,9*hei/10),
 						new obrengine.Vector2d(hei/10,hei/10));
-	rightRect=new obrengine.Rect(new obrengine.Vector2d(6*hei/10,85*hei/100),
+	rightRect=new obrengine.Rect(new obrengine.Vector2d(wid/2+hei/5,9*hei/10),
 						new obrengine.Vector2d(hei/10,hei/10));
 	//begin loop
 	updateAll();
