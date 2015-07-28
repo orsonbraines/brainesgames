@@ -21,6 +21,12 @@ Geometry Section
 		this.magnitude=Math.sqrt(x*x+y*y);
 	}
 	
+	obrengine.Vector2d.prototype.set=function(x,y){
+		this.x=x;
+		this.y=y;
+		this.magnitude=Math.sqrt(x*x+y*y);
+	}
+	
 	obrengine.Vector2d.prototype.add=function (vector){
 			this.x+=vector.x;
 			this.y+=vector.y;

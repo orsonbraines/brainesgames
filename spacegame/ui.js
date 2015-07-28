@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touchStr,touchX,touchY,controlRect;
+var touchStr,touchPos,controlRect;
 
 window.onload=init;
 
@@ -34,8 +34,7 @@ function init(){
 	setState("title");
 	setMode("");
 	touchStr="no touch events";
-	touchX=0;
-	touchY=0;
+	touchPos=new obrengine.Vector2d(-1,-1);
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
@@ -75,7 +74,7 @@ function init(){
 	}
 	background=g.getImageData(0,0,wid,hei);
 	//configure control rect
-	controlRect=new obrengine.Rect(new obrengine.Vector2d(8*hei/10,5*hei/100),
+	controlRect=new obrengine.Rect(new obrengine.Vector2d(5*hei/100,8*hei/10),
 							new obrengine.Vector2d(15*hei/100,15*hei/100));
 	//begin loop
 	updateAll();
@@ -133,8 +132,10 @@ function drawTouch(){
 	g.textAlign="right";
 	g.fillText(touchStr,wid,0);
 	
-	g.fillStyle="rgba(255,255,255,0.3)";
+	g.fillStyle="rgba(255,255,255,0.7)";
+	g.strokeStyle="rgba(0,0,0,0.7)";
 	g.fillRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
+	g.strokeRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
 }
 
 function drawGame(){
@@ -314,9 +315,8 @@ function touchEnd(e){
 }
 
 function touchMove(e){
-	touchX=e.changedTouches[0].clientX;
-	touchY=e.changedTouches[0].clientY;
-	touchStr=("touch move. x: "+touchX+"\ty: "+touchY+"\ty: ");
+	touchPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
+	touchStr=("touch move. x: "+touchPos.x+"\ty: "+touchPos.y+"\ty: ");
 }
 
 function gameLoop(){
@@ -332,21 +332,9 @@ function gameLoop(){
 		if(!map.alive){
 			setState("end");
 		}
-		
-		if(keyMode){
-			if(upArrowDown && mainPwr<10) mainPwr++;
-			else if (!upArrowDown && mainPwr>0) mainPwr--;
-			if(rightArrowDown && sidePwr<10) sidePwr++;
-			if(leftArrowDown && sidePwr>-10) sidePwr--;
-			if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
-			else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
-		}
-		else if(touchMode){
-			
-		}
+		//set power
+		setPower();
 		//move ship
-		map.ship.pwr=mainPwr/10;
-		map.ship.sidePwr=sidePwr/10;
 		map.move();
 		updateAll();
 	}
@@ -415,4 +403,27 @@ function startNew(){
 	setState("game");
 	updateAll();
 	draw();
+}
+
+function setPower(){
+	if(keyMode){
+		if(upArrowDown && mainPwr<10) mainPwr++;
+		else if (!upArrowDown && mainPwr>0) mainPwr--;
+		if(rightArrowDown && sidePwr<10) sidePwr++;
+		if(leftArrowDown && sidePwr>-10) sidePwr--;
+		if(!(rightArrowDown || leftArrowDown) && sidePwr>0) sidePwr--;
+		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
+	}
+	else if(touchMode){
+		if(controlRect.inside(touchPos)){
+			mainPwr=1- (obrengine.subractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
+			sidePwr=-1 + 2*(obrengine.subractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
+		}
+		else{
+			mainPwr=0;
+			sidePwr=0;
+		}
+	}
+	map.ship.pwr=mainPwr/10;
+	map.ship.sidePwr=sidePwr/10;
 }
