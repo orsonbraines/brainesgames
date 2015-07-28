@@ -1,6 +1,6 @@
 console.log("space.js loaded");
 //Ship Class
-function Ship(x,y){
+function Ship(x,y,l){
 	this.pos=new obrengine.Vector2d(x,y);
 	this.vel=new obrengine.Vector2d(0,0);
 	//this.acc=new Vector2d(0,0);
@@ -10,15 +10,15 @@ function Ship(x,y){
 	this.mass=1000;
 	this.momentOfInertia=10000;
 
-	this.maxThrust=200;
-	this.maxSideThrust=25;
+	this.maxThrust=5*l;
+	this.maxSideThrust=.6*l;
 	//thrust multiplier 0-1
 	this.pwr=0;
 	//thrust multiplier -1 - 1. positive is ccw, -ve cw
 	this.sidePwr=0;
 	
-	this.len=40;
-	this.wid=20;
+	this.len=l;
+	this.wid=l/2;
 	
 	this.updateVertices();
 }
@@ -78,9 +78,9 @@ function Map(w,h){
 	this.w=w;
 	this.h=h;
 	this.score=0;
-	this.ship=new Ship(w/2,h/2);
+	this.ship=new Ship(w/2,h/2,h/14);
 	this.alive=true;
-	this.asteroids=new Array(Math.ceil(w*h/60000));
+	this.asteroids=new Array(10);
 
 	
 	for(var i=0;i<this.asteroids.length;i++){
@@ -89,7 +89,7 @@ function Map(w,h){
 }
 
 Map.prototype.move=function(){
-	this.score+=1+Math.floor(this.ship.vel.magnitude);
+	this.score+=1+Math.floor(this.ship.vel.magnitude*200/this.h);
 	this.ship.move(1);
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
@@ -132,7 +132,7 @@ Map.prototype.inBounds=function(p){
 Map.prototype.generateAsteroid=function (){
 	with(obrengine){
 		var circle,vel,radius;
-		radius=10+20*Math.random();
+		radius=this.h/50+this.h/25*Math.random();
 		if(Math.random()>0.5){
 			if(Math.random()>0.5){
 				circle=new Circle(new Vector2d(-radius,Math.random()*this.h),radius);

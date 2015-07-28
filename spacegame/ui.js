@@ -8,7 +8,10 @@ var best;
 
 var upArrowDown,rightArrowDown,leftArrowDown;
 var mainPwr,sidePwr;
-var paused;
+
+var inTitle,inGame,inEnd,inPause;
+var keyMode,touchMode;
+var touchStr;
 
 window.onload=init;
 
@@ -19,8 +22,6 @@ function init(){
 	}
 	else{
 		var str=document.cookie.toString();
-		//console.log(str);
-		//console.log(str.substring(str.search("high=")+5).split(";")[0]);
 		best=Number(str.substring(str.search("high=")+5).split(";")[0]);
 		if(isNaN(best)) best=0;
 	}
@@ -30,7 +31,9 @@ function init(){
 	upArrowDown=false;
 	rightArrowDown=false;
 	leftArrowDown=false;
-	paused=false;
+	setState("title");
+	setMode("");
+	touchStr="no touch events";
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
@@ -50,6 +53,10 @@ function init(){
 	var body=document.body;
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
+	c.addEventListener("touchstart",touchStart);
+	c.addEventListener("touchend",touchEnd);
+	c.addEventListener("touchmove",touchMove);
+	c.addEventListener("touchcancel",touchCancel);
 	g=c.getContext("2d");
 	//prepare background
 	g.fillStyle = "#000000";
@@ -75,69 +82,21 @@ function init(){
 function draw(){
 	//draw background
 	g.putImageData(background,0,0);
-	if(map.alive){
-		//draw ship
-		g.fillStyle = "#ff0000";
-		g.beginPath();
-		g.moveTo(map.ship.vertices[0].x,map.ship.vertices[0].y);
-		for(var i=1;i<5;i++) g.lineTo(map.ship.vertices[i].x,map.ship.vertices[i].y);
-		g.closePath();
-		g.fill();
-		//draw flames
-		//main
-		g.fillStyle = "#ff6400";
-		g.beginPath();
-		g.moveTo(map.ship.mainFlame[0].x,map.ship.mainFlame[0].y);
-		for(var i=1;i<3;i++) g.lineTo(map.ship.mainFlame[i].x,map.ship.mainFlame[i].y);
-		g.closePath();
-		g.fill();
-		//side
-		g.beginPath();
-		g.moveTo(map.ship.sideFlame[0].x,map.ship.sideFlame[0].y);
-		for(var i=1;i<3;i++) g.lineTo(map.ship.sideFlame[i].x,map.ship.sideFlame[i].y);
-		g.closePath();
-		g.fill();
-		//draw asteroids
-		g.fillStyle="#642010"
-		for(var i=0;i<map.asteroids.length;i++){
-			var s=map.asteroids[i].shape;
-			g.beginPath();
-			g.arc(s.center.x,s.center.y,s.radius,0,2*Math.PI);
-			g.fill();
-		}
-		//draw score
-		g.fillStyle = textColour;
-		g.font="bold 16px Courier New";
-		g.textBaseline="top";
-		g.textAlign="left";
-		g.fillText("score: "+map.score,5,0);
-		g.fillText("best : "+best,5,20);
-		//draw power meters
-		g.fillStyle="#999999";
-		g.fillRect(wid-90,hei-30,80,20);
-		g.fillRect(wid-60,hei-120,20,80);
+	drawTouch();
+	if(inGame){
+		drawGame();
+		//if(touchMode) drawTouch();
 		
- 		g.strokeStyle= "#000000";
-		g.lineWidth=(3);
-		g.beginPath();
-		g.moveTo(wid-50,hei-30);
-		g.lineTo(wid-50,hei-10);
-		g.stroke();
-		//fill in power meters
-		g.fillStyle="#ff0000";
-		g.fillRect(wid-60,hei-120,20,mainPwr*8);
-		if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
-		else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
-		//draw paused text
-		if(paused){
-			g.fillStyle = textColour;
-			g.font="bold 52px Courier New";
-			g.textBaseline="top";
-			g.textAlign="center";
-			g.fillText("PAUSED",wid/2,hei/2);
-		}
 	}
-	else{
+	else if (inPause){
+		drawGame();
+		g.fillStyle = textColour;
+		g.font="bold 52px Courier New";
+		g.textBaseline="top";
+		g.textAlign="center";
+		g.fillText("paused",wid/2,hei/2);
+	}
+	else if (inEnd){
 		//game over screen
 		g.fillStyle = textColour;
 		g.font="bold 42px Courier New";
@@ -151,8 +110,80 @@ function draw(){
 		g.textAlign="center";
 		g.fillText("Hit Enter to start again!",wid/2,hei-40);
 	}
+	else if (inTitle){
+		g.fillStyle = textColour;
+		g.font="bold 62px serif";
+		g.textBaseline="middle";
+		g.textAlign="center";
+		g.fillText("Stellar Drifts",wid/2,hei/2);
+		g.font="bold 28px Courier New";
+		g.fillText("Hit any key to begin!",wid/2,hei/2+100);
+	}
 }
 
+function drawTouch(){
+	g.fillStyle = textColour;
+	g.font="bold 16px serif";
+	g.textBaseline="top";
+	g.textAlign="right";
+	g.fillText(touchStr,wid,0);
+}
+
+function drawGame(){
+	//draw ship
+	g.fillStyle = "#ff0000";
+	g.beginPath();
+	g.moveTo(map.ship.vertices[0].x,map.ship.vertices[0].y);
+	for(var i=1;i<5;i++) g.lineTo(map.ship.vertices[i].x,map.ship.vertices[i].y);
+	g.closePath();
+	g.fill();
+	//draw flames
+	//main
+	g.fillStyle = "#ff6400";
+	g.beginPath();
+	g.moveTo(map.ship.mainFlame[0].x,map.ship.mainFlame[0].y);
+	for(var i=1;i<3;i++) g.lineTo(map.ship.mainFlame[i].x,map.ship.mainFlame[i].y);
+	g.closePath();
+	g.fill();
+	//side
+	g.beginPath();
+	g.moveTo(map.ship.sideFlame[0].x,map.ship.sideFlame[0].y);
+	for(var i=1;i<3;i++) g.lineTo(map.ship.sideFlame[i].x,map.ship.sideFlame[i].y);
+	g.closePath();
+	g.fill();
+	//draw asteroids
+	g.fillStyle="#666666"
+	for(var i=0;i<map.asteroids.length;i++){
+		var s=map.asteroids[i].shape;
+		g.beginPath();
+		g.arc(s.center.x,s.center.y,s.radius,0,2*Math.PI);
+		g.fill();
+	}
+	//draw score
+	g.fillStyle = textColour;
+	g.font="bold 16px Courier New";
+	g.textBaseline="top";
+	g.textAlign="left";
+	g.fillText("score: "+map.score,5,0);
+	g.fillText("best : "+best,5,20);
+	//draw power meters
+	g.fillStyle="#999999";
+	g.fillRect(wid-90,hei-30,80,20);
+	g.fillRect(wid-60,hei-120,20,80);
+	g.strokeStyle= "#000000";
+	g.lineWidth=(3);
+	g.strokeRect(wid-90,hei-30,80,20);
+	g.strokeRect(wid-60,hei-120,20,80);
+	g.beginPath();
+	g.moveTo(wid-50,hei-30);
+	g.lineTo(wid-50,hei-10);
+	g.stroke();
+	//fill in power meters
+	g.fillStyle="#ff0000";
+	g.fillRect(wid-60,hei-120,20,mainPwr*8);
+	if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
+	else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
+}
 
 function updateMainFlame(){
 	with(obrengine){
@@ -195,42 +226,55 @@ function updateAll(){
 
 function keyDown(e){
 	//console.log("key down. code="+e.keyCode);
-	//left arrow: -ve side thrust
-	if(e.keyCode==37){
-		leftArrowDown=true;
-		rightArrowDown=false;
-		if(sidePwr>0) sidePwr=0;
+	
+	if(inTitle){
+		setState("game");
+		setMode("key");
 	}
-	//up arrow
-	else if(e.keyCode==38){
-		upArrowDown=true;
+	else if (inGame){
+		//left arrow: -ve side thrust
+		if(e.keyCode==37){
+			leftArrowDown=true;
+			rightArrowDown=false;
+			if(sidePwr>0) sidePwr=0;
+		}
+		//up arrow
+		else if(e.keyCode==38){
+			upArrowDown=true;
+		}
+		//right arrow: +ve side thrust
+		else if(e.keyCode==39){
+			rightArrowDown=true;
+			leftArrowDown=false;
+			if(sidePwr<0) sidePwr=0;
+		}
+		//down arrow
+		else if(e.keyCode==40){
+			mainPwr=0;
+			upArrowDown=false;
+		}
+		//p
+		else if(e.keyCode==80){
+			setState("pause");
+		}
 	}
-	//right arrow: +ve side thrust
-	else if(e.keyCode==39){
-		rightArrowDown=true;
-		leftArrowDown=false;
-		if(sidePwr<0) sidePwr=0;
+	else if(inPause){
+		//p
+		if(e.keyCode==80) setState("game");
 	}
-	//down arrow
-	else if(e.keyCode==40){
-		mainPwr=0;
-		upArrowDown=false;
-	}
-	//enter key
-	else if(e.keyCode==13 && !map.alive){
-		map=new Map(wid,hei);
-		mainPwr=0;
-		sidePwr=0;
-		upArrowDown=false;
-		rightArrowDown=false;
-		leftArrowDown=false;
-		paused=false;
-		updateAll();
-		draw();
-	}
-	//p
-	else if(e.keyCode==80){
-		paused=!paused;
+	else if(inEnd){
+		//enter key
+		if(e.keyCode==13){
+			map=new Map(wid,hei);
+			mainPwr=0;
+			sidePwr=0;
+			upArrowDown=false;
+			rightArrowDown=false;
+			leftArrowDown=false;
+			setState("game");
+			updateAll();
+			draw();
+		}
 	}
 }
 
@@ -254,14 +298,38 @@ function keyUp(e){
 	}
 }
 
+function touchStart(e){
+	if(inTitle){
+		setState("game");
+		setMode("touch");
+	}
+	touchStr=("touch start");
+}
+
+function touchEnd(e){
+	touchStr=("touch end");
+}
+
+function touchMove(e){
+	touchStr=("touch move");
+}
+
+function touchCancel(e){
+	touchStr=("touch cancel");
+}
+
 function gameLoop(){
 	//update power
-	if(map.alive && !paused){
+	if(inGame){
 		if(!document.hasFocus()){
 			upArrowDown=false;
 			rightArrowDown=false;
 			leftArrowDown=false;
-			paused=true;
+			setState("pause");
+		}
+		
+		if(!map.alive){
+			setState("end");
 		}
 		
 		if(upArrowDown && mainPwr<10) mainPwr++;
@@ -283,4 +351,50 @@ function gameLoop(){
 		}
 	}
 	draw();
+}
+
+function setState(state){
+	if(state=="pause"){
+		inPause=true;
+		inEnd=false;
+		inGame=false;
+		inTitle=false;
+	}
+	else if(state=="end"){
+		inPause=false;
+		inEnd=true;
+		inGame=false;
+		inTitle=false;
+	}
+	else if(state=="game"){
+		inPause=false;
+		inEnd=false;
+		inGame=true;
+		inTitle=false;
+	}
+	else if(state=="title"){
+		inPause=false;
+		inEnd=false;
+		inGame=false;
+		inTitle=true;
+	}
+}
+
+function setMode(mode){
+	if(mode=="key"){
+		keyMode=true;
+		touchMode=false;
+	}
+	else if(mode=="touch"){
+		keyMode=false;
+		touchMode=true;
+	}
+	else{
+		keyMode=false;
+		touchMode=false;
+	}
+}
+
+function hasMode(){
+	return keyMode || touchMode;
 }
