@@ -37,8 +37,8 @@ function init(){
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
-	var mwid=window.innerWidth-40;
-	var mhei=window.innerHeight-40;
+	var mwid=document.documentElement.clientWidth-20;
+	var mhei=document.documentElement.clientHeight-20;
 	if(mwid >= aspect*mhei){
 		c.width=Math.floor(aspect*mhei);
 		c.height=mhei;
@@ -317,6 +317,7 @@ function keyUp(e){
 }
 
 function touchStart(e){
+	e.preventDefault();
 	if(inTitle){
 		setState("game");
 		setMode("touch");
@@ -329,6 +330,7 @@ function touchStart(e){
 }
 
 function touchEnd(e){
+	e.preventDefault();
 	touches=e.touches;
 }
 
@@ -338,6 +340,7 @@ function touchMove(e){
 }
 
 function touchCancel(e){
+	e.preventDefault();
 	touches=e.touches;
 }
 
