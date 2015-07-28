@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touchStr,touchPos,controlRect;
+var touches,leftRect,rightRect,upRect;
 
 window.onload=init;
 
@@ -33,8 +33,7 @@ function init(){
 	leftArrowDown=false;
 	setState("title");
 	setMode("");
-	touchStr="no touch events";
-	touchPos=new obrengine.Vector2d(-1,-1);
+	touches=[];
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
@@ -57,6 +56,7 @@ function init(){
 	c.addEventListener("touchstart",touchStart);
 	c.addEventListener("touchend",touchEnd);
 	c.addEventListener("touchmove",touchMove);
+	c.addEventListener("touchcancel",touchCancel);
 	g=c.getContext("2d");
 	//prepare background
 	g.fillStyle = "#000000";
@@ -74,8 +74,12 @@ function init(){
 	}
 	background=g.getImageData(0,0,wid,hei);
 	//configure control rect
-	controlRect=new obrengine.Rect(new obrengine.Vector2d(5*hei/100,7*hei/10),
-							new obrengine.Vector2d(25*hei/100,25*hei/100));
+	upRect=new obrengine.Rect(new obrengine.Vector2d(45*hei/100,7*hei/10),
+							new obrengine.Vector2d(hei/10,hei/10));
+	leftRect=new obrengine.Rect(new obrengine.Vector2d(3*hei/10,85*hei/100),
+						new obrengine.Vector2d(hei/10,hei/10));
+	rightRect=new obrengine.Rect(new obrengine.Vector2d(6*hei/10,85*hei/100),
+						new obrengine.Vector2d(hei/10,hei/10));
 	//begin loop
 	updateAll();
 	draw();
@@ -126,16 +130,21 @@ function draw(){
 }
 
 function drawTouch(){
-	g.fillStyle = textColour;
+/* 	g.fillStyle = textColour;
 	g.font="bold 16px serif";
 	g.textBaseline="top";
 	g.textAlign="right";
-	g.fillText(touchStr,wid,0);
+	g.fillText(touchStr,wid,0); */
 	
 	g.fillStyle="rgba(255,255,255,0.7)";
 	g.strokeStyle="rgba(0,0,0,0.7)";
-	g.fillRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
-	g.strokeRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
+	
+	g.fillRect(upRect.corner.x,upRect.corner.y,upRect.size.x,upRect.size.y);
+	g.strokeRect(upRect.corner.x,upRect.corner.y,upRect.size.x,upRect.size.y);
+	g.fillRect(leftRect.corner.x,leftRect.corner.y,leftRect.size.x,leftRect.size.y);
+	g.strokeRect(leftRect.corner.x,leftRect.corner.y,leftRect.size.x,leftRect.size.y);
+	g.fillRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
+	g.strokeRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
 }
 
 function drawGame(){
@@ -307,16 +316,20 @@ function touchStart(e){
 	if(inEnd){
 		startNew();
 	}
-	touchStr=("touch start");
+	
+	touches=e.touches;
 }
 
 function touchEnd(e){
-	touchStr=("touch end");
+	touches=e.touches;
 }
 
 function touchMove(e){
-	touchPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
-	touchStr=("touch move. x: "+touchPos.x+"\ty: "+touchPos.y+"\ty: ");
+	touches=e.touches;
+}
+
+function touchCancel(e){
+	touches=e.touches;
 }
 
 function gameLoop(){
@@ -415,16 +428,21 @@ function setPower(){
 		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
 	}
 	else if(touchMode){	
-		if(controlRect.inside(touchPos)){
-			touchStr=(obrengine.subtractVectors(touchPos,controlRect.corner).y)+"/"+controlRect.size.y;
-			mainPwr=10- 10*(obrengine.subtractVectors(touchPos,controlRect.corner).y)/controlRect.size.y;
-			sidePwr=-10 + 20*(obrengine.subtractVectors(touchPos,controlRect.corner).x)/controlRect.size.x;
+		var rightDown=false;
+		var leftDown=false;
+		var upDown=false;
+		for(var i=0;i<touches.length;i++){
+			if(rightRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) rightDown=true;
+			if(leftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) leftDown=true;
+			if(upRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) upDown=true;
 		}
-		else{
-			touchStr="not inside";
-			mainPwr=0;
-			sidePwr=0;
-		}
+
+		if(upDown && mainPwr<10) mainPwr++;
+		else if (!upDown && mainPwr>0) mainPwr--;
+		if(rightDown && sidePwr<10) sidePwr++;
+		if(leftDown && sidePwr>-10) sidePwr--;
+		if(!(rightDown || leftDown) && sidePwr>0) sidePwr--;
+		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++;
 	}
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
