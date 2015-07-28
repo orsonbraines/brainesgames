@@ -133,7 +133,7 @@ function drawTouch(){
 	g.textAlign="right";
 	g.fillText(touchStr,wid,0);
 	
-	g.fillStyle="77ffffff";
+	g.fillStyle="rgba(255,255,255,0.3)";
 	g.fillRect(controlRect.corner.x,controlRect.corner.y,controlRect.size.x,controlRect.size.y);
 }
 
