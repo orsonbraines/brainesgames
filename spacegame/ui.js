@@ -477,15 +477,15 @@ function setPower(){
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
 		var sens=4;
-		tstr=delta.toString();
 		mainPwr=dx-sens;
 		if (mainPwr<0) mainPwr=0;
 		if (mainPwr>10) mainPwr=10;
 		sidePwr=dy+(dy<0?sens:-sens);
-		if (sidePwr<-10) mainPwr=-10;
-		if (sidePwr>10) mainPwr=10;
+		if (sidePwr<-10) sidePwr=-10;
+		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
+	tstr="mp: "+mainPwr+" sp"+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
 }
