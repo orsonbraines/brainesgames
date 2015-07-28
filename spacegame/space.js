@@ -89,7 +89,7 @@ function Map(w,h){
 }
 
 Map.prototype.move=function(){
-	this.score+=1+Math.floor(this.ship.vel.magnitude*200/this.h);
+	this.score+=1+Math.floor(this.ship.vel.magnitude*400/this.h);
 	this.ship.move(1);
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
