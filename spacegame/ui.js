@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touches,leftRect,rightRect,upRect,upRightRect,upLeftRect,otPos,ntPos;
+var touches,otPos,ntPos;
 var tstr;
 
 window.onload=init;
@@ -77,17 +77,6 @@ function init(){
 		g.fill();
 	}
 	background=g.getImageData(0,0,wid,hei);
-	//configure control rect
-	upRect=new obrengine.Rect(new obrengine.Vector2d(hei/10,8*hei/10),
-							new obrengine.Vector2d(hei/10,hei/10));
-	leftRect=new obrengine.Rect(new obrengine.Vector2d(0,9*hei/10),
-						new obrengine.Vector2d(hei/10,hei/10));
-	rightRect=new obrengine.Rect(new obrengine.Vector2d(2*hei/10,9*hei/10),
-						new obrengine.Vector2d(hei/10,hei/10));
-	upRightRect=new obrengine.Rect(new obrengine.Vector2d(2*hei/10,8*hei/10),
-						new obrengine.Vector2d(hei/10,hei/10));
-	upLeftRect=new obrengine.Rect(new obrengine.Vector2d(0/100,8*hei/10),
-						new obrengine.Vector2d(hei/10,hei/10));
 	//begin loop
 	updateAll();
 	draw();
@@ -143,20 +132,6 @@ function drawTouch(){
 	g.textBaseline="top";
 	g.textAlign="right";
 	g.fillText(tstr,wid,0); 
-	
-	g.fillStyle="rgba(255,255,255,0.7)";
-	g.strokeStyle="rgba(0,0,0,0.7)";
-	
-	g.fillRect(upRect.corner.x,upRect.corner.y,upRect.size.x,upRect.size.y);
-	g.strokeRect(upRect.corner.x,upRect.corner.y,upRect.size.x,upRect.size.y);
-	g.fillRect(leftRect.corner.x,leftRect.corner.y,leftRect.size.x,leftRect.size.y);
-	g.strokeRect(leftRect.corner.x,leftRect.corner.y,leftRect.size.x,leftRect.size.y);
-	g.fillRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
-	g.strokeRect(rightRect.corner.x,rightRect.corner.y,rightRect.size.x,rightRect.size.y);
-	g.fillRect(upRightRect.corner.x,upRightRect.corner.y,upRightRect.size.x,upRightRect.size.y);
-	g.strokeRect(upRightRect.corner.x,upRightRect.corner.y,upRightRect.size.x,upRightRect.size.y);
-	g.fillRect(upLeftRect.corner.x,upLeftRect.corner.y,upLeftRect.size.x,upLeftRect.size.y);
-	g.strokeRect(upLeftRect.corner.x,upLeftRect.corner.y,upLeftRect.size.x,upLeftRect.size.y);
 }
 
 function drawGame(){
@@ -448,35 +423,12 @@ function setPower(){
 		else if(!(rightArrowDown || leftArrowDown) && sidePwr<0) sidePwr++;
 	}
 	else if(touchMode){	
-/* 		var rightDown=false;
-		var leftDown=false;
-		var upDown=false;
-		for(var i=0;i<touches.length;i++){
-			if(rightRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) rightDown=true;
-			else if(leftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) leftDown=true;
-			else if(upRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))) upDown=true;
-			else if(upRightRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))){
-				upDown=true;
-				rightDown=true;
-			}
-			else if(upLeftRect.inside(new obrengine.Vector2d(touches[i].clientX,touches[i].clientY))){
-				upDown=true;
-				leftDown=true;
-			}
-		}
-
-		if(upDown && mainPwr<10) mainPwr++;
-		else if (!upDown && mainPwr>0) mainPwr--;
-		if(rightDown && sidePwr<10) sidePwr++;
-		if(leftDown && sidePwr>-10) sidePwr--;
-		if(!(rightDown || leftDown) && sidePwr>0) sidePwr--;
-		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
-		var sens=2;
+		var sens=1;
 		mainPwr=dx/sens;
 		if (mainPwr<0) mainPwr=0;
 		if (mainPwr>10) mainPwr=10;
@@ -485,7 +437,7 @@ function setPower(){
 		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
-	tstr="mp: "+mainPwr+" sp"+sidePwr;
+	//tstr="mp: "+mainPwr+" sp"+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
 }
