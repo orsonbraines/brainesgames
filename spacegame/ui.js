@@ -473,15 +473,17 @@ function setPower(){
 		else if(!(rightDown || leftDown) && sidePwr<0) sidePwr++; */
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
-		var sens=1;
+		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
+		var dx=delta.magnitude*Math.cos(theta);
+		var dy=delta.magnitude*Math.sin(theta);
+		var sens=4;
 		tstr=delta.toString();
-		mainPwr=(Math.abs(delta.y)/sens>10? 10 : Math.abs(delta.y)/sens);
-		if(delta.x>0){
-			sidePwr=(delta.x/sens>10? 10 : delta.x/sens);
-		}
-		else{
-			sidePwr=(delta.x/sens<-10? -10 : delta.x/sens);
-		}
+		mainPwr=dx-sens;
+		if (mainPwr<0) mainPwr=0;
+		if (mainPwr>10) mainPwr=10;
+		sidePwr=dy+(dy<0?sens:-sens);
+		if (sidePwr<-10) mainPwr=-10;
+		if (sidePwr>10) mainPwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
 	map.ship.pwr=mainPwr/10;
