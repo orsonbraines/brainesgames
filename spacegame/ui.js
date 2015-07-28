@@ -428,7 +428,7 @@ function setPower(){
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
-		var sens=2;
+		var sens=5;
 		mainPwr=dx-sens;
 		if (mainPwr<0) mainPwr=0;
 		if (mainPwr>10) mainPwr=10;
