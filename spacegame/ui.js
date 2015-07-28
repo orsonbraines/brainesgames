@@ -117,7 +117,8 @@ function draw(){
 		g.textAlign="center";
 		g.fillText("Stellar Drifts",wid/2,hei/2);
 		g.font="bold 28px Courier New";
-		g.fillText("Hit any key to begin!",wid/2,hei/2+100);
+		g.fillText("Hit any key to begin in Key Mode!",wid/2,hei/2+100);
+		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+128);
 	}
 }
 
@@ -265,15 +266,7 @@ function keyDown(e){
 	else if(inEnd){
 		//enter key
 		if(e.keyCode==13){
-			map=new Map(wid,hei);
-			mainPwr=0;
-			sidePwr=0;
-			upArrowDown=false;
-			rightArrowDown=false;
-			leftArrowDown=false;
-			setState("game");
-			updateAll();
-			draw();
+			startNew();
 		}
 	}
 }
@@ -302,6 +295,9 @@ function touchStart(e){
 	if(inTitle){
 		setState("game");
 		setMode("touch");
+	}
+	if(inEnd){
+		startNew();
 	}
 	touchStr=("touch start");
 }
@@ -397,4 +393,16 @@ function setMode(mode){
 
 function hasMode(){
 	return keyMode || touchMode;
+}
+
+function startNew(){
+	map=new Map(wid,hei);
+	mainPwr=0;
+	sidePwr=0;
+	upArrowDown=false;
+	rightArrowDown=false;
+	leftArrowDown=false;
+	setState("game");
+	updateAll();
+	draw();
 }
