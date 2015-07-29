@@ -1,7 +1,8 @@
 console.log("ui.js loaded");
 
 var c,g;
-var background,textColour;
+var background;
+var textColour,sFont,mFont,lFont,tFont;
 var wid,hei;
 var map;
 var best;
@@ -43,7 +44,7 @@ function initVars(){
 	tstr="";
 	ntPos=new obrengine.Vector2d(0,0);
 	otPos=new obrengine.Vector2d(0,0);
-	textColour="#0000ff";
+	textColour="#b45094";
 	c= document.getElementById("canvas0");
 	c.width=document.documentElement.clientWidth;
 	c.height=document.documentElement.clientHeight;
@@ -53,6 +54,10 @@ function initVars(){
 	console.log(hei);
 	map=new Map(wid,hei);
 	pauseRect=new obrengine.Rect(new obrengine.Vector2d(wid-hei/10,0),new obrengine.Vector2d(hei/10,hei/10));
+	sFont= wid/32;
+	mFont= wid/24;
+	lFont= wid/12;
+	tFont= wid/10;
 	g=c.getContext("2d");
 	prepBg();
 	updateAll();
@@ -96,7 +101,7 @@ function draw(){
 	else if (inPause){
 		drawGame();
 		g.fillStyle = textColour;
-		g.font="bold 52px Courier New";
+		g.font=getFont(lFont);
 		g.textBaseline="top";
 		g.textAlign="center";
 		g.fillText("paused",wid/2,hei/2);
@@ -104,34 +109,34 @@ function draw(){
 	else if (inEnd){
 		//game over screen
 		g.fillStyle = textColour;
-		g.font="bold 42px Courier New";
+		g.font=getFont(lFont);
 		g.textBaseline="top";
 		g.textAlign="center";
 		g.fillText("GAME OVER!",wid/2,hei/2);
-		g.font="bold 20px Courier New";
-		g.textAlign="left";
-		g.fillText("score: "+map.score,wid/2-75,hei/2+40);
-		g.fillText("best : "+best,wid/2-75,hei/2+65);
+		g.font=getFont(mFont);
+		g.fillText("score: "+map.score,wid/2,hei/2+lFont);
+		g.fillText("best : "+best,wid/2,hei/2+lFont+mFont);
 		g.textAlign="center";
-		if(keyMode)g.fillText("Hit Enter to start again!",wid/2,hei-40);
-		else if(touchMode) g.fillText("Touch the screen to start again!",wid/2,hei-40);
+		g.textBaseline="bottom";
+		if(keyMode)g.fillText("Hit Enter to start again!",wid/2,hei);
+		else if(touchMode) g.fillText("Touch the screen to start again!",wid/2,hei);
 	}
 	else if (inTitle){
 		g.fillStyle = textColour;
-		g.font="bold 62px serif";
+		g.font=getFont(tFont);
 		g.textBaseline="middle";
 		g.textAlign="center";
 		g.fillText("Stellar Drifts",wid/2,hei/2);
-		g.font="bold 28px Courier New";
-		g.fillText("Hit any key to begin in Key Mode!",wid/2,hei/2+100);
-		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+128);
+		g.font=getFont(sFont);
+		g.fillText("Hit any key to begin in Key Mode!",wid/2,hei/2+tFont);
+		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+tFont+mFont);
 	}
 	if(touchMode)drawTouch();
 }
 
 function drawTouch(){
  	g.fillStyle = textColour;
-	g.font="bold 16px serif";
+	g.font=getFont(sFont);
 	g.textBaseline="top";
 	g.textAlign="right";
 	g.fillText(tstr,wid,0); 
@@ -182,7 +187,7 @@ function drawGame(){
 	g.closePath();
 	g.fill();
 	//draw asteroids
-	g.fillStyle="#666666"
+	g.fillStyle="#bbbbbb"
 	for(var i=0;i<map.asteroids.length;i++){
 		var s=map.asteroids[i].shape;
 		g.beginPath();
@@ -191,11 +196,11 @@ function drawGame(){
 	}
 	//draw score
 	g.fillStyle = textColour;
-	g.font="bold 16px Courier New";
+	g.font=getFont(sFont);
 	g.textBaseline="top";
 	g.textAlign="left";
 	g.fillText("score: "+map.score,5,0);
-	g.fillText("best : "+best,5,20);
+	g.fillText("best : "+best,5,sFont);
 	//draw power meters
 	g.fillStyle="#999999";
 	g.fillRect(wid-90,hei-30,80,20);
@@ -484,4 +489,8 @@ function setPower(){
 	//tstr="mp: "+mainPwr+" sp"+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
+}
+
+function getFont(size){
+		return "bold "+size+"px Courier New";
 }
