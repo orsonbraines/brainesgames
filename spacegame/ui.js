@@ -2,7 +2,7 @@ console.log("ui.js loaded");
 
 var c,g;
 var background,textColour;
-var wid,hei,aspect;
+var wid,hei;
 var map;
 var best;
 
@@ -18,7 +18,6 @@ window.onload=init;
 
 function init(){
 	console.log("initialising");
-	console.log(typeof window.requestAnimationFrame);
 	if(!navigator.cookieEnabled || document.cookie.search("high=")==-1){
 		best=0;
 	}
@@ -41,19 +40,8 @@ function init(){
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
-	aspect=1.7;
-	var mwid=document.body.clientWidth;
-	var mhei=document.body.clientHeight;
-	if(mwid >= aspect*mhei){
-		c.width=Math.floor(aspect*mhei);
-		c.height=mhei;
-	}
-	else{
-		c.width=mwid;
-		c.height=mwid/aspect;
-	}
-	console.log(c.width);
-	console.log(c.height);
+	c.width=window.innerWidth;
+	c.height=window.innerHeight;
 	wid=c.width;
 	hei=c.height;
 	console.log(wid);
@@ -85,25 +73,6 @@ function init(){
 	//begin loop
 	updateAll();
 	setInterval("gameLoop()",50);
-
-/* 	// shim layer with setTimeout fallback
-	window.requestAnimFrame = (function(){
-	  return  window.requestAnimationFrame       ||
-			  window.webkitRequestAnimationFrame ||
-			  window.mozRequestAnimationFrame    ||
-			  function( callback ){
-				window.setTimeout(callback, 1000 / 60);
-			  };
-	})();
-
-
-	// usage:
-	// instead of setInterval(render, 16) ....
-
-	(function animloop(){
-	  requestAnimFrame(animloop);
-	  draw();
-	})(); */
 }
 
 function draw(){
