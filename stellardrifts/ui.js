@@ -12,7 +12,7 @@ var mainPwr,sidePwr;
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
 var otPos,ntPos;
-var tstr;
+var tstr,pauseRect;
 
 window.onload=init;
 
@@ -52,6 +52,7 @@ function initVars(){
 	console.log(wid);
 	console.log(hei);
 	map=new Map(wid,hei);
+	pauseRect=new obrengine.Rect(new obrengine.Vector2d(wid-hei/10,0),new obrengine.Vector2d(hei/10,hei/10));
 	g=c.getContext("2d");
 	prepBg();
 	updateAll();
@@ -91,8 +92,6 @@ function draw(){
 	g.putImageData(background,0,0);
 	if(inGame){
 		drawGame();
-		if(touchMode) drawTouch();
-		
 	}
 	else if (inPause){
 		drawGame();
@@ -127,6 +126,7 @@ function draw(){
 		g.fillText("Hit any key to begin in Key Mode!",wid/2,hei/2+100);
 		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+128);
 	}
+	drawTouch();
 }
 
 function drawTouch(){
@@ -320,6 +320,14 @@ function touchStart(e){
 	}
 	if(inEnd){
 		startNew();
+	}
+	if(pauseRect.inside(ntPos)){
+		if(inPause){
+			setState("game");
+		}
+		else if(inGame){
+			setState("pause");
+		}
 	}
 	
 	touches=e.touches;

@@ -1,0 +1,10 @@
+table, th, td, tr{
+	border-style:solid;
+	border-color:#000000;
+	border-width:2px;
+	background-color:#cccccc;
+}
+
+body{
+	background-color:#eeeeee;
+}
