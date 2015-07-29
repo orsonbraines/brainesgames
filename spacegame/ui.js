@@ -41,8 +41,8 @@ function init(){
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
 	aspect=1.7;
-	var mwid=document.documentElement.clientWidth-40;
-	var mhei=document.documentElement.clientHeight-40;
+	var mwid=document.body.clientWidth;
+	var mhei=document.body.clientHeight;
 	if(mwid >= aspect*mhei){
 		c.width=Math.floor(aspect*mhei);
 		c.height=mhei;
@@ -51,8 +51,12 @@ function init(){
 		c.width=mwid;
 		c.height=mwid/aspect;
 	}
+	console.log(c.width);
+	console.log(c.height);
 	wid=c.width;
 	hei=c.height;
+	console.log(wid);
+	console.log(hei);
 	map=new Map(wid,hei);
 	var body=document.body;
 	body.addEventListener("keyup",keyUp);
