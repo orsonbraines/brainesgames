@@ -135,6 +135,23 @@ function drawTouch(){
 	g.textBaseline="top";
 	g.textAlign="right";
 	g.fillText(tstr,wid,0); 
+	
+
+	if(inGame || inPause){
+		g.fillStyle= "rgba(255,255,255,0.7)";
+		g.strokeStyle= "rgba(255,255,255,0.7)";
+		var startX=pauseRect.corner.x;
+		var startY=pauseRect.corner.y;
+		var s=pauseRect.size.x;
+		if(inGame){
+			g.strokeRect(startX,startY,s,s);
+			g.fillRect(startX+2*s/10,startY+2*s/10,2*s/10,6*s/10);
+			g.fillRect(startX+6*s/10,startY+2*s/10,2*s/10,6*s/10);
+		}
+		else{
+			
+		}
+	}
 }
 
 function drawGame(){
