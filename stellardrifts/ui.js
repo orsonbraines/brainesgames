@@ -126,7 +126,7 @@ function draw(){
 		g.fillText("Hit any key to begin in Key Mode!",wid/2,hei/2+100);
 		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+128);
 	}
-	drawTouch();
+	if(touchMode)drawTouch();
 }
 
 function drawTouch(){
