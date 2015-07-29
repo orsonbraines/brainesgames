@@ -78,7 +78,8 @@ function Map(w,h){
 	this.w=w;
 	this.h=h;
 	this.score=0;
-	this.ship=new Ship(w/2,h/2,h/14);
+	this.mean=(w+h)/2;
+	this.ship=new Ship(w/2,h/2,this.mean/20);
 	this.alive=true;
 	this.asteroids=new Array(10);
 
@@ -89,7 +90,7 @@ function Map(w,h){
 }
 
 Map.prototype.move=function(){
-	this.score+=1+Math.floor(this.ship.vel.magnitude*400/this.h);
+	this.score+=1+Math.floor(this.ship.vel.magnitude*500/this.mean);
 	this.ship.move(1);
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
@@ -132,7 +133,7 @@ Map.prototype.inBounds=function(p){
 Map.prototype.generateAsteroid=function (){
 	with(obrengine){
 		var circle,vel,radius;
-		radius=this.h/50+this.h/25*Math.random();
+		radius=this.mean/80+this.mean/40*Math.random();
 		if(Math.random()>0.5){
 			if(Math.random()>0.5){
 				circle=new Circle(new Vector2d(-radius,Math.random()*this.h),radius);
