@@ -18,6 +18,7 @@ window.onload=init;
 
 function init(){
 	console.log("initialising");
+	console.log(typeof window.requestAnimationFrame);
 	if(!navigator.cookieEnabled || document.cookie.search("high=")==-1){
 		best=0;
 	}
@@ -83,8 +84,26 @@ function init(){
 	background=g.getImageData(0,0,wid,hei);
 	//begin loop
 	updateAll();
-	draw();
 	setInterval("gameLoop()",50);
+
+	// shim layer with setTimeout fallback
+	window.requestAnimFrame = (function(){
+	  return  window.requestAnimationFrame       ||
+			  window.webkitRequestAnimationFrame ||
+			  window.mozRequestAnimationFrame    ||
+			  function( callback ){
+				window.setTimeout(callback, 1000 / 60);
+			  };
+	})();
+
+
+	// usage:
+	// instead of setInterval(render, 16) ....
+
+	(function animloop(){
+	  requestAnimFrame(animloop);
+	  draw();
+	})();
 }
 
 function draw(){
@@ -356,7 +375,7 @@ function gameLoop(){
 			document.cookie="high="+best+"; expires=Thu, 18 Dec 2033 12:00:00 UTC; path=/";
 		}
 	}
-	draw();
+	//draw();
 }
 
 function setState(state){
@@ -414,7 +433,6 @@ function startNew(){
 	leftArrowDown=false;
 	setState("game");
 	updateAll();
-	draw();
 }
 
 function setPower(){
