@@ -143,8 +143,8 @@ function drawTouch(){
 		var startX=pauseRect.corner.x;
 		var startY=pauseRect.corner.y;
 		var s=pauseRect.size.x;
+		g.strokeRect(startX,startY,s,s);
 		if(inGame){
-			g.strokeRect(startX,startY,s,s);
 			g.fillRect(startX+25*s/100,startY+2*s/10,2*s/10,6*s/10);
 			g.fillRect(startX+55*s/100,startY+2*s/10,2*s/10,6*s/10);
 		}
@@ -152,7 +152,7 @@ function drawTouch(){
 			g.beginPath();
 			g.moveTo(startX+2*s/10,startY+2*s/10);
 			g.lineTo(startX+2*s/10,startY+8*s/10);
-			g.lineTo(startX+8*s/10,startY+5*s/10);
+			g.lineTo(startX+7*s/10,startY+5*s/10);
 			g.closePath();
 			g.fill();
 		}
