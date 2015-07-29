@@ -86,7 +86,7 @@ function init(){
 	updateAll();
 	setInterval("gameLoop()",50);
 
-	// shim layer with setTimeout fallback
+/* 	// shim layer with setTimeout fallback
 	window.requestAnimFrame = (function(){
 	  return  window.requestAnimationFrame       ||
 			  window.webkitRequestAnimationFrame ||
@@ -103,7 +103,7 @@ function init(){
 	(function animloop(){
 	  requestAnimFrame(animloop);
 	  draw();
-	})();
+	})(); */
 }
 
 function draw(){
@@ -375,7 +375,7 @@ function gameLoop(){
 			document.cookie="high="+best+"; expires=Thu, 18 Dec 2033 12:00:00 UTC; path=/";
 		}
 	}
-	//draw();
+	draw();
 }
 
 function setState(state){
