@@ -150,9 +150,9 @@ function drawTouch(){
 		}
 		else{
 			g.beginPath();
-			g.moveTo(startX+2*s/10,startY+2*s/10);
-			g.lineTo(startX+2*s/10,startY+8*s/10);
-			g.lineTo(startX+7*s/10,startY+5*s/10);
+			g.moveTo(startX+15*s/100,startY+1*s/10);
+			g.lineTo(startX+15*s/100,startY+9*s/10);
+			g.lineTo(startX+85*s/100,startY+5*s/10);
 			g.closePath();
 			g.fill();
 		}
