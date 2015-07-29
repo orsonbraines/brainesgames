@@ -11,7 +11,7 @@ var mainPwr,sidePwr;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
-var touches,otPos,ntPos;
+var otPos,ntPos;
 var tstr;
 
 window.onload=init;
@@ -27,6 +27,12 @@ function init(){
 		if(isNaN(best)) best=0;
 	}
 
+	initVars();
+	initListeners();
+	setInterval("gameLoop()",50);
+}
+
+function initVars(){
 	mainPwr=0;
 	sidePwr=0;
 	upArrowDown=false;
@@ -34,27 +40,35 @@ function init(){
 	leftArrowDown=false;
 	setState("title");
 	setMode("");
-	touches=[];
 	tstr="";
 	ntPos=new obrengine.Vector2d(0,0);
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#0000ff";
 	c= document.getElementById("canvas0");
-	c.width=window.innerWidth;
-	c.height=window.innerHeight;
+	c.width=document.documentElement.clientWidth;
+	c.height=document.documentElement.clientHeight;
 	wid=c.width;
 	hei=c.height;
 	console.log(wid);
 	console.log(hei);
 	map=new Map(wid,hei);
+	g=c.getContext("2d");
+	prepBg();
+	updateAll();
+}
+
+function initListeners(){
 	var body=document.body;
+	window.addEventListener("resize", resizeWindow);
 	body.addEventListener("keyup",keyUp);
 	body.addEventListener("keydown",keyDown);
 	c.addEventListener("touchstart",touchStart);
 	c.addEventListener("touchend",touchEnd);
 	c.addEventListener("touchmove",touchMove);
 	c.addEventListener("touchcancel",touchCancel);
-	g=c.getContext("2d");
+}
+
+function prepBg(){
 	//prepare background
 	g.fillStyle = "#000000";
 	g.fillRect(0,0,wid,hei);
@@ -70,9 +84,6 @@ function init(){
 		g.fill();
 	}
 	background=g.getImageData(0,0,wid,hei);
-	//begin loop
-	updateAll();
-	setInterval("gameLoop()",50);
 }
 
 function draw(){
@@ -221,6 +232,18 @@ function updateAll(){
 	updateSideFlame();
 }
 
+function resizeWindow(){
+/* 	if(!inTitle){
+		console.log("resize");
+		c.width=window.innerWidth;
+		c.height=window.innerHeight;
+		wid=c.width;
+		hei=c.height;
+		startNew();
+	} */
+	initVars();
+}
+
 function keyDown(e){
 	//console.log("key down. code="+e.keyCode);
 	
@@ -305,18 +328,15 @@ function touchStart(e){
 function touchEnd(e){
 	e.preventDefault();
 	ntPos.set(otPos.x,otPos.y);
-	touches=e.touches;
 }
 
 function touchMove(e){
 	e.preventDefault();
-	touches=e.touches;
 	ntPos.set(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
 }
 
 function touchCancel(e){
 	e.preventDefault();
-	touches=e.touches;
 }
 
 function gameLoop(){
