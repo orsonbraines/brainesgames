@@ -130,8 +130,13 @@ Map.prototype.move=function(){
 				}
 			}
 		}
-		
-		if(!this.inBounds(this.asteroids[i])) this.asteroids[i]=this.generateAsteroid();
+		var cx=this.asteroids[i].shape.center.x;
+		var cy=this.asteroids[i].shape.center.y;
+		var r=this.asteroids[i].shape.radius;
+		if(cx<-r) this.asteroids[i].shape.center.set(this.w+r,cy);
+		else if(cx>this.w+r) this.asteroids[i].shape.center.set(-r,cy);
+		if(cy<-r) this.asteroids[i].shape.center.set(cx,this.h+r);
+		else if(cy>this.h+r) this.asteroids[i].shape.center.set(cx,-r);
 	}
 	for(var i=0;i<this.asteroids.length;i++){
 		for(var j=i+1;j<this.asteroids.length;j++){
@@ -140,9 +145,13 @@ Map.prototype.move=function(){
 										 this.asteroids[j].shape,this.asteroids[j].mass,this.asteroids[j].v);
 		}
 	}
-	if (!(this.inBounds(this.ship.vertices[0])||
+	/* if (!(this.inBounds(this.ship.vertices[0])||
 	this.inBounds(this.ship.vertices[1])||this.inBounds(this.ship.vertices[2])||
-	this.inBounds(this.ship.vertices[3])||this.inBounds(this.ship.vertices[4]) ) ) this.alive=false;
+	this.inBounds(this.ship.vertices[3])||this.inBounds(this.ship.vertices[4]) ) ) this.alive=false; */
+	if(this.ship.pos.x<-this.ship.len) this.ship.pos.set(this.w+this.ship.len,this.ship.pos.y);
+	else if(this.ship.pos.x>this.w+this.ship.len) this.ship.pos.set(-this.ship.len,this.ship.pos.y);
+	if(this.ship.pos.y<-this.ship.len) this.ship.pos.set(this.ship.pos.x,this.h+this.ship.len);
+	else if(this.ship.pos.y>this.h+this.ship.len) this.ship.pos.set(this.ship.pos.x,-this.ship.len);
 
 }
 
@@ -156,31 +165,31 @@ Map.prototype.inBounds=function(p){
 	}
 }
 
+Map.prototype.validAsteroid=function(circle){
+	with(obrengine){
+		if (intersects(circle,new Circle(this.ship.pos,this.mean/5))) return false;
+		
+		for(var i=0;i<this.asteroids.length;i++){
+			if(typeof this.asteroids[i] != "undefined" && this.asteroids[i] instanceof Asteroid &&
+				intersects(circle,this.asteroids[i].shape)
+			)return false;
+		}
+		return true;
+	}
+}
+
 Map.prototype.generateAsteroid=function (){
 	with(obrengine){
-		var circle,vel,radius,mv;
+		var radius,v,position,circ,mv;
+		var mv=this.mean/200;
+		position=new Vector2d(this.w*Math.random(),this.h*Math.random());
 		radius=this.mean/80+this.mean/40*Math.random();
-		mv=this.mean/200;
-		if(Math.random()>0.5){
-			if(Math.random()>0.5){
-				circle=new Circle(new Vector2d(-radius,Math.random()*this.h),radius);
-				vel=new Vector2d(Math.random()*mv,-mv+Math.random()*2*mv);
-			}
-			else{
-				circle=new Circle(new Vector2d(this.w+radius,Math.random()*this.h),radius);
-				vel=new Vector2d(Math.random()*-mv,-mv+Math.random()*2*mv);
-			}
+		v=new Vector2d(-mv+2*mv*Math.random(),-mv+2*mv*Math.random());
+		circ=new Circle(position,radius);
+		while(!this.validAsteroid(circ)){
+			position=new Vector2d(this.w*Math.random(),this.h*Math.random());
+			circ=new Circle(position,radius);
 		}
-		else{
-			if(Math.random()>0.5){
-				circle=new Circle(new Vector2d(Math.random()*this.w,-radius),radius);
-				vel=new Vector2d(-mv+Math.random()*2*mv,Math.random()*mv);
-			}
-			else{
-				circle=new Circle(new Vector2d(Math.random()*this.w,this.h+radius),radius);
-				vel=new Vector2d(-mv+Math.random()*2*mv,Math.random()*-mv);
-			}
-		}
-		return new Asteroid(circle,vel);
+		return new Asteroid(circ,v);
 	}
 }

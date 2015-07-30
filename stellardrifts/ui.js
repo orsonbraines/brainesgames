@@ -63,7 +63,8 @@ function initVars(){
 	leftArrowDown=false;
 	setState("title");
 	setMode("");
-	tstr="";
+	tstr=typeof window.requestAnimationFrame;
+	console.log(typeof window.requestAnimationFrame);
 	ntPos=new obrengine.Vector2d(0,0);
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#b45094";
@@ -223,7 +224,7 @@ function drawGame(){
 	g.stroke();
 	//fill in power meters
 	g.fillStyle="rgba(255,0,0,0.7)";
-	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y*mainPwr/10);
+	if(mainPwr>0)g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y*mainPwr/10);
 	if(sidePwr>0)g.fillRect(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y,
 							spbRect.size.x/2*sidePwr/10,spbRect.size.y);
 	else if(sidePwr<0)g.fillRect(spbRect.corner.x+spbRect.size.x/2*(1+sidePwr/10),spbRect.corner.y,
@@ -479,7 +480,7 @@ function setPower(){
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
-		var msens=2;
+		var msens=3;
 		var ssens=2;
 		mainPwr=dx-msens;
 		if (mainPwr<0) mainPwr=0;
