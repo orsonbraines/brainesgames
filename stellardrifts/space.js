@@ -20,6 +20,9 @@ function Ship(pos,l){
 	this.len=l;
 	this.wid=l/2;
 	
+	this.vertices=[];
+	this.sides=[];
+	
 	this.updateVertices();
 }
 
@@ -45,13 +48,11 @@ Ship.prototype.updateVertices=function (){
 	with(obrengine){
 		var forward=scaleVector(getUnitVector(this.angle),this.len/2);
 		var side=scaleVector(getUnitVector(this.angle+Math.PI/2),this.wid/2);
-		this.vertices=[
-			addVectors(this.pos,addVectors(forward,side)),
-			addVectors(this.pos,scaleVector(forward,2)),
-			addVectors(this.pos,subtractVectors(forward,side)),
-			subtractVectors(this.pos,addVectors(forward,side)),
-			addVectors(this.pos,subtractVectors(side,forward)),
-		];
+		this.vertices[0]=addVectors(this.pos,addVectors(forward,side));
+		this.vertices[1]=addVectors(this.pos,scaleVector(forward,2));
+		this.vertices[2]=addVectors(this.pos,subtractVectors(forward,side));
+		this.vertices[3]=subtractVectors(this.pos,addVectors(forward,side));
+		this.vertices[4]=addVectors(this.pos,subtractVectors(side,forward));
 		
 		this.sides=[
 			new Line(this.vertices[0],this.vertices[1]),

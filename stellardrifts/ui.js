@@ -1,11 +1,13 @@
 console.log("ui.js loaded");
 
 var c,g;
-var background;
+var stars;
 var textColour,sFont,mFont,lFont,tFont;
 var wid,hei;
 var map;
 var best;
+
+//var hasReqAnimFrame;
 
 var upArrowDown,rightArrowDown,leftArrowDown;
 var mainPwr,sidePwr,mpbRect,spbRect;
@@ -33,6 +35,7 @@ function init(){
 	initListeners();
 	map=new Map(wid,hei);
 	updateAll();
+	//if(hasReqAnimFrame) window.requestAnimationFrame(draw);
 	setInterval("gameLoop()",50);
 }
 
@@ -63,8 +66,11 @@ function initVars(){
 	leftArrowDown=false;
 	setState("title");
 	setMode("");
-	tstr=typeof window.requestAnimationFrame;
-	console.log(typeof window.requestAnimationFrame);
+	tstr="";
+/* 	hasReqAnimFrame= typeof window.requestAnimationFrame != "undefined";
+	console.log(hasReqAnimFrame);
+	if(hasReqAnimFrame) console.log("hasReqAnimFrame");
+	if(!hasReqAnimFrame) console.log("not hasReqAnimFrame"); */
 	ntPos=new obrengine.Vector2d(0,0);
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#b45094";
@@ -85,25 +91,23 @@ function initListeners(){
 
 function prepBg(){
 	//prepare background
-	g.fillStyle = "#000000";
-	g.fillRect(0,0,wid,hei);
+	stars=[];
 	for(var i=0;i<Math.ceil(wid*hei/20000);i++){
-		var x=Math.floor(Math.random()*wid);
-		var y=Math.floor(Math.random()*hei);
-		var grd = g.createRadialGradient(x, y, 1, x, y, 4);
-		grd.addColorStop(0, "#ffffff");
-		grd.addColorStop(1, "#000000");
-		g.fillStyle = grd;
-		g.beginPath();
-		g.arc(x,y,4,0,2*Math.PI);
-		g.fill();
+		stars[i]={x:Math.floor(Math.random()*wid),y:Math.floor(Math.random()*hei)};
 	}
-	background=g.getImageData(0,0,wid,hei);
 }
 
 function draw(){
 	//draw background
-	g.putImageData(background,0,0);
+	g.fillStyle = "#000000";
+	g.fillRect(0,0,wid,hei);
+	g.fillStyle = "#eeeeee";
+ 	for(var i=0;i<stars.length;i++){
+		g.beginPath();
+		g.arc(stars[i].x,stars[i].y,2,0,2*Math.PI);
+		g.fill();
+	}	 
+	
 	if(inGame){
 		drawGame();
 	}
@@ -141,6 +145,8 @@ function draw(){
 		g.fillText("Touch the screen to begin in Touch Mode!",wid/2,hei/2+tFont+mFont);
 	}
 	if(touchMode)drawTouch();
+	
+	//if(hasReqAnimFrame) window.requestAnimationFrame(draw);
 }
 
 function drawTouch(){
@@ -405,7 +411,10 @@ function gameLoop(){
 			document.cookie="high="+best+"; expires=Thu, 18 Dec 2033 12:00:00 UTC; path=/";
 		}
 	}
-	draw();
+	//if(!hasReqAnimFrame){
+		draw();
+	//	console.log("drawing from game loop");
+	//}
 }
 
 function setState(state){
