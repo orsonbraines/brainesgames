@@ -8,7 +8,7 @@ var map;
 var best;
 
 var upArrowDown,rightArrowDown,leftArrowDown;
-var mainPwr,sidePwr;
+var mainPwr,sidePwr,mpbRect,spbRect;
 
 var inTitle,inGame,inEnd,inPause;
 var keyMode,touchMode;
@@ -29,8 +29,30 @@ function init(){
 	}
 
 	initVars();
+	initSize();
 	initListeners();
+	map=new Map(wid,hei);
+	updateAll();
 	setInterval("gameLoop()",50);
+}
+
+function initSize(){
+	c.width=document.documentElement.clientWidth;
+	c.height=document.documentElement.clientHeight;
+	wid=c.width;
+	hei=c.height;
+	console.log(wid);
+	console.log(hei);
+	pauseRect=new obrengine.Rect(new obrengine.Vector2d(wid-hei/10,0),new obrengine.Vector2d(hei/10,hei/10));
+	spbRect=new obrengine.Rect(new obrengine.Vector2d(88*wid/100,94*hei/100),
+								new obrengine.Vector2d(wid/10,4*hei/100));
+	mpbRect=new obrengine.Rect(new obrengine.Vector2d(93*wid/100-2*hei/100,92*hei/100-wid/10),
+								new obrengine.Vector2d(4*hei/100,wid/10));
+	sFont= wid/32;
+	mFont= wid/24;
+	lFont= wid/12;
+	tFont= wid/10;
+	prepBg();
 }
 
 function initVars(){
@@ -46,21 +68,7 @@ function initVars(){
 	otPos=new obrengine.Vector2d(0,0);
 	textColour="#b45094";
 	c= document.getElementById("canvas0");
-	c.width=document.documentElement.clientWidth;
-	c.height=document.documentElement.clientHeight;
-	wid=c.width;
-	hei=c.height;
-	console.log(wid);
-	console.log(hei);
-	map=new Map(wid,hei);
-	pauseRect=new obrengine.Rect(new obrengine.Vector2d(wid-hei/10,0),new obrengine.Vector2d(hei/10,hei/10));
-	sFont= wid/32;
-	mFont= wid/24;
-	lFont= wid/12;
-	tFont= wid/10;
 	g=c.getContext("2d");
-	prepBg();
-	updateAll();
 }
 
 function initListeners(){
@@ -202,22 +210,24 @@ function drawGame(){
 	g.fillText("score: "+map.score,5,0);
 	g.fillText("best : "+best,5,sFont);
 	//draw power meters
-	g.fillStyle="#999999";
-	g.fillRect(wid-90,hei-30,80,20);
-	g.fillRect(wid-60,hei-120,20,80);
-	g.strokeStyle= "#000000";
+	g.fillStyle="rgba(200,200,200,0.7)";
+	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y);
+	g.fillRect(spbRect.corner.x,spbRect.corner.y,spbRect.size.x,spbRect.size.y);
+	g.strokeStyle="#000000";
 	g.lineWidth=(3);
-	g.strokeRect(wid-90,hei-30,80,20);
-	g.strokeRect(wid-60,hei-120,20,80);
+	g.strokeRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y);
+	g.strokeRect(spbRect.corner.x,spbRect.corner.y,spbRect.size.x,spbRect.size.y);
 	g.beginPath();
-	g.moveTo(wid-50,hei-30);
-	g.lineTo(wid-50,hei-10);
+	g.moveTo(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y);
+	g.lineTo(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y+spbRect.size.y);
 	g.stroke();
 	//fill in power meters
-	g.fillStyle="#ff0000";
-	g.fillRect(wid-60,hei-120,20,mainPwr*8);
-	if(sidePwr>=0)g.fillRect(wid-50,hei-30,sidePwr*4,20);
-	else g.fillRect(wid-50+sidePwr*4,hei-30,sidePwr*-4,20);
+	g.fillStyle="rgba(255,0,0,0.7)";
+	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y*mainPwr/10);
+	if(sidePwr>=0)g.fillRect(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y,
+							spbRect.size.x/2*sidePwr/10,spbRect.size.y);
+	else g.fillRect(spbRect.corner.x+spbRect.size.x/2*(1+sidePwr/10),spbRect.corner.y,
+							spbRect.size.x/2*-sidePwr/10,spbRect.size.y);
 }
 
 function updateMainFlame(){
@@ -260,15 +270,10 @@ function updateAll(){
 }
 
 function resizeWindow(){
-/* 	if(!inTitle){
-		console.log("resize");
-		c.width=window.innerWidth;
-		c.height=window.innerHeight;
-		wid=c.width;
-		hei=c.height;
-		startNew();
-	} */
-	initVars();
+	initSize();
+	
+	map.resize(wid,hei);
+	updateAll();
 }
 
 function keyDown(e){

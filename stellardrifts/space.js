@@ -1,7 +1,7 @@
 console.log("space.js loaded");
 //Ship Class
-function Ship(x,y,l){
-	this.pos=new obrengine.Vector2d(x,y);
+function Ship(pos,l){
+	this.pos=pos;
 	this.vel=new obrengine.Vector2d(0,0);
 	//this.acc=new Vector2d(0,0);
 	this.angle=0;
@@ -79,7 +79,7 @@ function Map(w,h){
 	this.h=h;
 	this.score=0;
 	this.mean=(w+h)/2;
-	this.ship=new Ship(w/2,h/2,this.mean/20);
+	this.ship=new Ship(new obrengine.Vector2d(w/2,h/2),this.mean/20);
 	this.alive=true;
 	this.asteroids=new Array(10);
 
@@ -87,6 +87,32 @@ function Map(w,h){
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i]=this.generateAsteroid();
 	}
+}
+
+Map.prototype.resize=function (nw,nh){
+	var xratio=nw/this.w;
+	var yratio=nh/this.h;
+	var nmean=(nw+nh)/2;
+	var mratio=nmean/this.mean;
+	
+	this.ship.pos=new obrengine.Vector2d(this.ship.pos.x*xratio,this.ship.pos.y*yratio);
+	this.ship.vel.scale(mratio);
+	this.ship.len=nmean/20;
+	this.ship.wid=this.ship.len/2;
+	this.maxThrust=5*this.ship.len;
+	this.maxSideThrust=.6*this.ship.len;
+
+	for(var i=0;i<this.asteroids.length;i++){
+		this.asteroids[i].shape.center=new obrengine.Vector2d(this.asteroids[i].shape.center.x*xratio,
+															this.asteroids[i].shape.center.y*yratio);
+		this.asteroids[i].shape.radius*=mratio;
+		this.asteroids[i].v.scale(mratio);
+		this.asteroids[i].mass=this.asteroids[i].shape.radius*this.asteroids[i].shape.radius;
+	}
+	this.w=nw;
+	this.h=nh;
+	this.mean=nmean;
+	this.ship.updateVertices;
 }
 
 Map.prototype.move=function(){
@@ -132,26 +158,27 @@ Map.prototype.inBounds=function(p){
 
 Map.prototype.generateAsteroid=function (){
 	with(obrengine){
-		var circle,vel,radius;
+		var circle,vel,radius,mv;
 		radius=this.mean/80+this.mean/40*Math.random();
+		mv=this.mean/200;
 		if(Math.random()>0.5){
 			if(Math.random()>0.5){
 				circle=new Circle(new Vector2d(-radius,Math.random()*this.h),radius);
-				vel=new Vector2d(Math.random()*3,-3+Math.random()*6);
+				vel=new Vector2d(Math.random()*mv,-mv+Math.random()*2*mv);
 			}
 			else{
 				circle=new Circle(new Vector2d(this.w+radius,Math.random()*this.h),radius);
-				vel=new Vector2d(Math.random()*-3,-3+Math.random()*6);
+				vel=new Vector2d(Math.random()*-mv,-mv+Math.random()*2*mv);
 			}
 		}
 		else{
 			if(Math.random()>0.5){
 				circle=new Circle(new Vector2d(Math.random()*this.w,-radius),radius);
-				vel=new Vector2d(-3+Math.random()*6,Math.random()*3);
+				vel=new Vector2d(-mv+Math.random()*2*mv,Math.random()*mv);
 			}
 			else{
 				circle=new Circle(new Vector2d(Math.random()*this.w,this.h+radius),radius);
-				vel=new Vector2d(-3+Math.random()*6,Math.random()*-3);
+				vel=new Vector2d(-mv+Math.random()*2*mv,Math.random()*-mv);
 			}
 		}
 		return new Asteroid(circle,vel);
