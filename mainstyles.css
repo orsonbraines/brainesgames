@@ -43,6 +43,12 @@ p{
 	margin:15px;
 }
 
+p.centered{
+	font-size:1.5em;
+	margin:15px;
+	text-align:center;
+}
+
 a{
 	margin:10px;
 }
@@ -57,4 +63,5 @@ li.innerlist{
 
 footer{
 	text-align:center;
+	margin:30px;
 }
