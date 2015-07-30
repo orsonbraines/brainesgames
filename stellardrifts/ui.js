@@ -224,9 +224,9 @@ function drawGame(){
 	//fill in power meters
 	g.fillStyle="rgba(255,0,0,0.7)";
 	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y*mainPwr/10);
-	if(sidePwr>=0)g.fillRect(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y,
+	if(sidePwr>0)g.fillRect(spbRect.corner.x+spbRect.size.x/2,spbRect.corner.y,
 							spbRect.size.x/2*sidePwr/10,spbRect.size.y);
-	else g.fillRect(spbRect.corner.x+spbRect.size.x/2*(1+sidePwr/10),spbRect.corner.y,
+	else if(sidePwr<0)g.fillRect(spbRect.corner.x+spbRect.size.x/2*(1+sidePwr/10),spbRect.corner.y,
 							spbRect.size.x/2*-sidePwr/10,spbRect.size.y);
 }
 
@@ -479,7 +479,7 @@ function setPower(){
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
 		var dx=delta.magnitude*Math.cos(theta);
 		var dy=delta.magnitude*Math.sin(theta);
-		var msens=5;
+		var msens=2;
 		var ssens=2;
 		mainPwr=dx-msens;
 		if (mainPwr<0) mainPwr=0;
