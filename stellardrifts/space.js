@@ -79,14 +79,14 @@ function Map(w,h){
 	this.w=w;
 	this.h=h;
 	this.score=0;
+	this.kscore=0;
 	this.mean=(w+h)/2;
 	this.ship=new Ship(new obrengine.Vector2d(w/2,h/2),this.mean/20);
 	this.alive=true;
-	this.asteroids=new Array(10);
-
+	this.asteroids=new Array(5);
 	
 	for(var i=0;i<this.asteroids.length;i++){
-		this.asteroids[i]=this.generateAsteroid();
+		this.asteroids[i]=this.generateAsteroid(true);
 	}
 }
 
@@ -118,6 +118,10 @@ Map.prototype.resize=function (nw,nh){
 
 Map.prototype.move=function(){
 	this.score+=1+Math.floor(this.ship.vel.magnitude*500/this.mean);
+	if(Math.floor(this.score/1000)>this.kscore){
+		this.asteroids[this.asteroids.length]=this.generateAsteroid(false);
+		this.kscore++;
+	}
 	this.ship.move(1);
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
@@ -179,17 +183,39 @@ Map.prototype.validAsteroid=function(circle){
 	}
 }
 
-Map.prototype.generateAsteroid=function (){
+Map.prototype.generateAsteroid=function (start){
 	with(obrengine){
 		var radius,v,position,circ,mv;
 		var mv=this.mean/200;
-		position=new Vector2d(this.w*Math.random(),this.h*Math.random());
 		radius=this.mean/80+this.mean/40*Math.random();
 		v=new Vector2d(-mv+2*mv*Math.random(),-mv+2*mv*Math.random());
-		circ=new Circle(position,radius);
-		while(!this.validAsteroid(circ)){
+		if(start){
 			position=new Vector2d(this.w*Math.random(),this.h*Math.random());
 			circ=new Circle(position,radius);
+			while(!this.validAsteroid(circ)){
+				position=new Vector2d(this.w*Math.random(),this.h*Math.random());
+				circ=new Circle(position,radius);
+			}
+		}
+		else{
+			if(Math.random()>this.w/(this.w+this.h)){
+				position=new Vector2d(-radius,this.h*Math.random());
+				circ=new Circle(position,radius);
+			}
+			else{
+				position=new Vector2d(this.w*Math.random(),-radius);
+				circ=new Circle(position,radius);
+			}
+			while(!this.validAsteroid(circ)){
+				if(Math.random()>this.w/(this.w+this.h)){
+					position=new Vector2d(-radius,this.h*Math.random());
+					circ=new Circle(position,radius);
+				}
+				else{
+					position=new Vector2d(this.w*Math.random(),-radius);
+					circ=new Circle(position,radius);
+				}
+			}
 		}
 		return new Asteroid(circ,v);
 	}

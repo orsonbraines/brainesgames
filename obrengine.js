@@ -136,6 +136,20 @@ Geometry Section
 	obrengine.Rect.prototype.toString=function (){
 		return "Rect corner: "+this.corner+"\tsize: "+this.size;
 	}
+	
+	//Polygon class
+	obrengine.Polygon=function(points){
+		this.points=points;
+		this.lines=[];
+		for(var i=0;i<this.points.length;i++){
+			if(i==0) this.lines[i]=new Line(this.points[this.points.length-1],this.points[i]);
+			else this.lines[i]=new Line(this.points[i-1],this.points[i]);
+		}
+	}
+	
+	obrengine.Polygon.prototype.toString=function (){
+		return "Polygon";
+	}
 
 	//intersection tester
 	obrengine.intersects=function (obj1,obj2){
@@ -190,9 +204,32 @@ Geometry Section
 				var la=obj1;
 				var lb=obj2;
 				var xint=(la.slope*la.p1.x + lb.p1.y - lb.slope*lb.p1.x -la.p1.y)/(la.slope-lb.slope);
-				console.log("xint: "+xint);
 				return la.p1.x<xint && xint<la.p2.x && lb.p1.x<xint && xint<lb.p2.x;
 			}
+		}
+		else if(obj1 instanceof Line && obj2 instanceof Polygon || obj1 instanceof Polygon && obj2 instanceof Line){
+			var l,p;
+			if(obj1 instanceof Line){
+				l=obj1;
+				p=obj2;
+			}
+			else{
+				l=obj2;
+				p=obj1;
+			}
+			
+			for(var i=0;i<p.lines.length;i++){
+				if(intersects(p.lines[i],l)) return true;
+			}
+			return false;
+		}
+		else if(obj1 instanceof Polygon && obj2 instanceof Polygon){
+			for(var i=0;i<obj1.lines.length;i++){
+				for(var j=0;j<obj2.lines.length;j++){
+					if(intersects(obj1.lines[i],obj2.lines[j])) return true;
+				}
+			}
+			return false;
 		}
 	}
 	
