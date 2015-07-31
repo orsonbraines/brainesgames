@@ -201,24 +201,14 @@ Geometry Section
 		var d2=subtractVectors(circ1.center,circ2.center);
 		var u1=d2.toUnit();
 		var u2=d1.toUnit();
-/*  		var k1= -m1*(d1.x*v1.x+d1.y+v1.y)/(d1.x*u1.x+d1.y+u1.y);
-		var k2= -m2*(d2.x*v2.x+d2.y+v2.y)/(d2.x*u2.x+d2.y+u2.y);
-		console.log("k1: "+k1);
-		console.log("k2: "+k2); */
-		//try iterative solultion
-/* 		while(dotProduct(d1,v1)>-0.2 && dotProduct(d2,v2)>-0.2){
-			v1.add(scaleVector(u1,100/m1));
-			v2.add(scaleVector(u2,100/m2));
-		} */
-/* 		console.log("before");
-		console.log("cos angle 1:"+(dotProduct(d1,v1)/(d1.magnitude*v1.magnitude)));
-		console.log("cos angle 2:"+(dotProduct(d2,v2)/(d2.magnitude*v2.magnitude))); */
+  		var k1= m1*obrengine.dotProduct(d1,v1)/d1.magnitude;
+		var k2= m2*obrengine.dotProduct(d2,v2)/d2.magnitude;
 		
-		//temporary  simple solution to 'bounce' the circles off each other
+		var k=Math.max(k1,k2);
+		v1.add(obrengine.scaleVector(u1,k/m1));
+		v2.add(obrengine.scaleVector(u2,k/m2));
+/* 		//temporary  simple solution to 'bounce' the circles off each other
 		v1.add(scaleVector(u1,0.5*(m1+m2)/m1));
-		v2.add(scaleVector(u2,0.5*(m1+m2)/m2));	
-/* 		console.log("after");
-		console.log("cos angle 1:"+(dotProduct(d1,v1)/(d1.magnitude*v1.magnitude)));
-		console.log("cos angle 2:"+(dotProduct(d2,v2)/(d2.magnitude*v2.magnitude))); */
+		v2.add(scaleVector(u2,0.5*(m1+m2)/m2));	 */
 	}
 }
