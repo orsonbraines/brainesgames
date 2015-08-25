@@ -46,7 +46,7 @@ Geometry Section
 	}
 	
 	obrengine.Vector2d.prototype.toString=function (){
-			return "x: "+this.x+"\ty: "+this.y;
+			return "x: "+this.x+"\ty: "+this.y+"\tmagnitude: "+this.magnitude;
 	}
 	
 	obrengine.Vector2d.prototype.toUnit=function(){
@@ -231,21 +231,50 @@ Geometry Section
 			}
 			return false;
 		}
+		else if(obj1 instanceof Rect && obj2 instanceof Rect){
+			var l,r;
+			if(obj1.corner.x>obj2.corner.x){
+				r=obj1;
+				l=obj2;
+			}
+			else{
+				r=obj2;
+				l=obj1;
+			}
+			return r.corner.x<l.corner.x+l.size.x &&(
+				(r.corner.y>l.corner.y && r.corner.y<l.corner.y+l.size.y)||
+				(r.corner.y+r.size.y>l.corner.y && r.corner.y+r.size.y<l.corner.y+l.size.y));
+		}
 	}
 	
-	obrengine.collideCircles=function(circ1,m1,v1,circ2,m2,v2){
-		var d1=subtractVectors(circ2.center,circ1.center);
-		var d2=subtractVectors(circ1.center,circ2.center);
-		var u1=d2.toUnit();
-		var u2=d1.toUnit();
-  		var k1= m1*obrengine.dotProduct(d1,v1)/d1.magnitude;
-		var k2= m2*obrengine.dotProduct(d2,v2)/d2.magnitude;
-		
-		var k=Math.max(k1,k2);
-		v1.add(obrengine.scaleVector(u1,k/m1));
-		v2.add(obrengine.scaleVector(u2,k/m2));
-/* 		//temporary  simple solution to 'bounce' the circles off each other
-		v1.add(scaleVector(u1,0.5*(m1+m2)/m1));
-		v2.add(scaleVector(u2,0.5*(m1+m2)/m2));	 */
+	//returns null if no lines intersect or an array of booleans indicating which lines intersect
+	obrengine.intersectsAt=function(obj1,obj2){
+		//TODO
+		return null;
+	}
+	
+	obrengine.collideCircles=function(circ1,m1,v1,circ2,m2,v2){	
+		//logic: vrf.u= -bounce*vri.u
+		var u=subtractVectors(circ1.center,circ2.center).toUnit();
+		var vri=subtractVectors(v1,v2);
+		var bounce=0.4;
+		var dp=dotProduct(vri,u);
+		if(dp<0){
+			var f=-m1*m2*(bounce+1)*dp/(m1+m2);
+			v1.add(obrengine.scaleVector(u,f/m1));
+			v2.add(obrengine.scaleVector(u,-f/m2));
+		}
+	}
+	
+/*
+***
+Utility Function
+***
+*/
+
+	obrengine.lowestEmpty= function(array){
+		var c=0;
+		while(c<array.length && typeof array[c]!="undefined" && array[c]!="null") c++;
+		return c;
 	}
 }

@@ -35,6 +35,7 @@ function init(){
 	initListeners();
 	map=new Map(wid,hei);
 	updateAll();
+	setState("title");
 	//if(hasReqAnimFrame) window.requestAnimationFrame(draw);
 	setInterval("gameLoop()",50);
 }
@@ -64,7 +65,6 @@ function initVars(){
 	upArrowDown=false;
 	rightArrowDown=false;
 	leftArrowDown=false;
-	setState("title");
 	setMode("");
 	tstr="";
 /* 	hasReqAnimFrame= typeof window.requestAnimationFrame != "undefined";
@@ -209,12 +209,23 @@ function drawGame(){
 		g.arc(s.center.x,s.center.y,s.radius,0,2*Math.PI);
 		g.fill();
 	}
+	//draw bullets
+	g.strokeStyle="#aaaa00";
+	g.lineWidth=5;
+	for(var i=0;i<map.bullets.length;i++){
+		if(map.bullets[i]!="null"){
+			g.beginPath();
+			g.moveTo(map.bullets[i].line.p1.x,map.bullets[i].line.p1.y);
+			g.lineTo(map.bullets[i].line.p2.x,map.bullets[i].line.p2.y);
+			g.stroke();
+		}
+	}
 	//draw score
 	g.fillStyle = textColour;
 	g.font=getFont(sFont);
 	g.textBaseline="top";
 	g.textAlign="left";
-	g.fillText("score: "+map.score,5,0);
+	g.fillText("score: "+map.score+" +"+map.pointsGained,5,0);
 	g.fillText("best : "+best,5,sFont);
 	//draw power meters
 	g.fillStyle="rgba(200,200,200,0.7)";
@@ -316,6 +327,10 @@ function keyDown(e){
 		else if(e.keyCode==80){
 			setState("pause");
 		}
+		//space bar
+		else if(e.keyCode==32){
+			map.reqGun=true;
+		}
 	}
 	else if(inPause){
 		//p
@@ -404,6 +419,7 @@ function gameLoop(){
 		//move ship
 		map.move();
 		updateAll();
+		draw();
 	}
 	if(map.score>best){
 		best=map.score;
@@ -412,7 +428,7 @@ function gameLoop(){
 		}
 	}
 	//if(!hasReqAnimFrame){
-		draw();
+		
 	//	console.log("drawing from game loop");
 	//}
 }
@@ -442,6 +458,7 @@ function setState(state){
 		inGame=false;
 		inTitle=true;
 	}
+	draw();
 }
 
 function setMode(mode){
@@ -470,8 +487,8 @@ function startNew(){
 	upArrowDown=false;
 	rightArrowDown=false;
 	leftArrowDown=false;
-	setState("game");
 	updateAll();
+	setState("game");
 }
 
 function setPower(){

@@ -57,19 +57,19 @@ with(ogrengine){
 		for(var i=0;i<group.obs.length;i++){
 			var ob=group.obs[i];
 			if(ob instanceof obrengine.Rect){
-				ctx.fillRect(ob.corner.x,ob.corner.y,ob.size.x,ob.size.y);
+				this.ctx.fillRect(ob.corner.x,ob.corner.y,ob.size.x,ob.size.y);
 			}
 			else if(ob instanceof obrengine.Circle){
-				ctx.beginPath();
-				ctx.arc(ob.center.x,ob.center.y,ob.radius,0,2*Math.PI);
-				ctx.fill();
+				this.ctx.beginPath();
+				this.ctx.arc(ob.center.x,ob.center.y,ob.radius,0,2*Math.PI);
+				this.ctx.fill();
 			}
 			else if(ob instanceof obrengine.Polygon){
-				ctx.beginPath();
-				ctx.moveTo(ob.points[0].x,ob.points[0].y);
-				for(var j=1;j<ob.points.length;j++) ctx.lineTo(ob.points[j].x,ob.points[j].y);
-				ctx.closePath();
-				ctx.fill();
+				this.ctx.beginPath();
+				this.ctx.moveTo(ob.points[0].x,ob.points[0].y);
+				for(var j=1;j<ob.points.length;j++) this.ctx.lineTo(ob.points[j].x,ob.points[j].y);
+				this.ctx.closePath();
+				this.ctx.fill();
 			}
 		}
 	}
@@ -79,25 +79,25 @@ with(ogrengine){
 		for(var i=0;i<group.obs.length;i++){
 			var ob=group.obs[i];
 			if(ob instanceof obrengine.Line){
-				ctx.beginPath();
-				ctx.moveTo(ob.p1.x,ob.p1.y);
-				ctx.lineTo(ob.p2.x,ob.p2.y);
-				ctx.stroke();
+				this.ctx.beginPath();
+				this.ctx.moveTo(ob.p1.x,ob.p1.y);
+				this.ctx.lineTo(ob.p2.x,ob.p2.y);
+				this.ctx.stroke();
 			}
 			else if(ob instanceof obrengine.Rect){
-				ctx.strokeRect(ob.corner.x,ob.corner.y,ob.size.x,ob.size.y);
+				this.ctx.strokeRect(ob.corner.x,ob.corner.y,ob.size.x,ob.size.y);
 			}
 			else if(ob instanceof obrengine.Circle){
-				ctx.beginPath();
-				ctx.arc(ob.center.x,ob.center.y,ob.radius,0,2*Math.PI);
-				ctx.stroke();
+				this.ctx.beginPath();
+				this.ctx.arc(ob.center.x,ob.center.y,ob.radius,0,2*Math.PI);
+				this.ctx.stroke();
 			}
 			else if(ob instanceof obrengine.Polygon){
-				ctx.beginPath();
-				ctx.moveTo(ob.points[0].x,ob.points[0].y);
-				for(var j=1;j<ob.points.length;j++) ctx.lineTo(ob.points[j].x,ob.points[j].y);
-				ctx.closePath();
-				ctx.stroke();
+				this.ctx.beginPath();
+				this.ctx.moveTo(ob.points[0].x,ob.points[0].y);
+				for(var j=1;j<ob.points.length;j++) this.ctx.lineTo(ob.points[j].x,ob.points[j].y);
+				this.ctx.closePath();
+				this.ctx.stroke();
 			}
 		}
 	}
