@@ -274,7 +274,7 @@ Utility Function
 
 	obrengine.lowestEmpty= function(array){
 		var c=0;
-		while(c<array.length && typeof array[c]!="undefined" && array[c]!="null") c++;
+		while(c<array.length && typeof array[c]!="undefined" && array[c]!=null) c++;
 		return c;
 	}
 }
