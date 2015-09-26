@@ -10,8 +10,8 @@ function Ship(pos,l){
 	this.mass=500;
 	this.momentOfInertia=5000;
 
-	this.maxThrust=2.5*l;
-	this.maxSideThrust=.3*l;
+	this.maxThrust=0.8*l;
+	this.maxSideThrust=.2*l;
 	//thrust multiplier 0-1
 	this.pwr=0;
 	//thrust multiplier -1 - 1. positive is ccw, -ve cw
@@ -82,7 +82,7 @@ function Bullet(ship){
 		
 		this.pos=addVectors(ship.pos,scaleVector(getUnitVector(this.angle),this.len));
 		this.line=new Line(this.pos,addVectors(this.pos,scaleVector(getUnitVector(this.angle),this.len)));
-		this.mass=12;
+		this.mass=8;
 		this.dist=0;
 	}
 }
@@ -90,7 +90,7 @@ function Bullet(ship){
 Bullet.prototype.move=function(t){
 	with (obrengine){
 		var d=scaleVector(this.v,t);
-		this.dist+=d.magnitude;
+		this.dist+=d.getMagnitude();
 		this.pos.add(d);
 		this.line=new Line(this.pos,addVectors(this.pos,scaleVector(getUnitVector(this.angle),this.len)));
 	}
@@ -145,7 +145,7 @@ Map.prototype.resize=function (nw,nh){
 
 Map.prototype.move=function(){
 	this.pointsGained=0;
-	this.pointsGained+=1+Math.floor(this.ship.vel.magnitude*500/this.mean);
+	this.pointsGained+=1+Math.floor(this.ship.vel.getMagnitude()*500/this.mean);
 	if(Math.floor(this.score/1000)>this.kscore){
 		this.asteroids[this.asteroids.length]=this.generateAsteroid(false);
 		this.kscore++;
@@ -156,9 +156,9 @@ Map.prototype.move=function(){
 		var b=new Bullet(this.ship);
 		this.bullets[obrengine.lowestEmpty(this.bullets)]=b;
 		this.ship.vel.add(obrengine.scaleVector(obrengine.getUnitVector(this.ship.angle),
-			-b.mass*b.v.magnitude/this.ship.mass));
+			-b.mass*b.v.getMagnitude()/this.ship.mass));
 		this.reqGun=false;
-		this.gunTimer=5;
+		this.gunTimer=10;
 	}
 	
 	for(var i=0;i<this.bullets.length;i++){
@@ -166,14 +166,14 @@ Map.prototype.move=function(){
 			if(this.bullets[i]!="null"){
 				this.bullets[i].move(1/2);
 				for(var j=0;j<this.asteroids.length;j++){
-					if(obrengine.subtractVectors(this.asteroids[j].shape.center,this.bullets[i].pos).magnitude<
+					if(obrengine.subtractVectors(this.asteroids[j].shape.center,this.bullets[i].pos).getMagnitude()<
 						this.bullets[i].len + this.asteroids[j].shape.radius){
 						if(obrengine.intersects(this.asteroids[j].shape,this.bullets[i].line)){
 							this.pointsGained+=Math.floor(1800*(0.05+Math.min(Math.abs(this.ship.angvel),0.1))*
-								this.bullets[i].dist*this.asteroids[j].v.magnitude/
+								this.bullets[i].dist*this.asteroids[j].v.getMagnitude()/
 								Math.pow(this.asteroids[j].shape.radius,2))+10;
 							this.asteroids[j].v.add(obrengine.scaleVector(obrengine.getUnitVector(this.bullets[i].angle),
-								this.bullets[i].v.magnitude*this.bullets[i].mass/this.asteroids[j].mass));
+								this.bullets[i].v.getMagnitude()*this.bullets[i].mass/this.asteroids[j].mass));
 							this.bullets[i]="null";
 							//console.log(this.pointsGained);
 							//console.log(Math.abs(this.ship.angvel));
@@ -191,7 +191,7 @@ Map.prototype.move=function(){
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].move(1);
 		
-		if(obrengine.subtractVectors(this.asteroids[i].shape.center,this.ship.pos).magnitude<
+		if(obrengine.subtractVectors(this.asteroids[i].shape.center,this.ship.pos).getMagnitude()<
 			this.ship.len + this.asteroids[i].shape.radius){
 			for(var j=0;j<5;j++){
 				if(obrengine.intersects(this.asteroids[i].shape,this.ship.sides[j])){
@@ -253,7 +253,7 @@ Map.prototype.validAsteroid=function(circle){
 Map.prototype.generateAsteroid=function (start){
 	with(obrengine){
 		var radius,v,position,circ,mv;
-		var mv=this.mean/200;
+		var mv=this.mean/400;
 		radius=this.mean/80+this.mean/40*Math.random();
 		v=new Vector2d(-mv+2*mv*Math.random(),-mv+2*mv*Math.random());
 		if(start){

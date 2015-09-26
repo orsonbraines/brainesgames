@@ -1,7 +1,6 @@
 var obrengine=require("../obrengine");
 with (obrengine){
-	var trig=new Polygon([new Vector2d(0,0),new Vector2d(10,0),new Vector2d(5,5)]);
-	var sq=new Polygon([new Vector2d(0,3),new Vector2d(10,3),new Vector2d(10,13),new Vector2d(0,13)]);
-	
-	console.log(intersects(trig,sq));
+	var l1=new Line(new Vector2d(3,3),new Vector2d(6,6));
+	var l2=new Line(new Vector2d(4,2),new Vector2d(5,6));
+	console.log(intersects(l1,l2));
 }

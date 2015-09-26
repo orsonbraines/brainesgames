@@ -37,7 +37,7 @@ function init(){
 	updateAll();
 	setState("title");
 	//if(hasReqAnimFrame) window.requestAnimationFrame(draw);
-	setInterval("gameLoop()",50);
+	setInterval("gameLoop()",20);
 }
 
 function initSize(){
@@ -121,6 +121,7 @@ function draw(){
 	}
 	else if (inEnd){
 		//game over screen
+		updateBest();
 		g.fillStyle = textColour;
 		g.font=getFont(lFont);
 		g.textBaseline="top";
@@ -410,7 +411,6 @@ function gameLoop(){
 			leftArrowDown=false;
 			setState("pause");
 		}
-		
 		if(!map.alive){
 			setState("end");
 		}
@@ -420,17 +420,22 @@ function gameLoop(){
 		map.move();
 		updateAll();
 		draw();
+		updateBest();
 	}
+	
+	//if(!hasReqAnimFrame){
+		
+	//	console.log("drawing from game loop");
+	//}
+}
+
+function updateBest(){
 	if(map.score>best){
 		best=map.score;
 		if(navigator.cookieEnabled){
 			document.cookie="high="+best+"; expires=Thu, 18 Dec 2033 12:00:00 UTC; path=/";
 		}
 	}
-	//if(!hasReqAnimFrame){
-		
-	//	console.log("drawing from game loop");
-	//}
 }
 
 function setState(state){
