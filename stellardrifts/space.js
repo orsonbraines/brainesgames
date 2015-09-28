@@ -126,8 +126,8 @@ Map.prototype.resize=function (nw,nh){
 	this.ship.vel.scale(mratio);
 	this.ship.len=nmean/20;
 	this.ship.wid=this.ship.len/2;
-	this.maxThrust=5*this.ship.len;
-	this.maxSideThrust=.6*this.ship.len;
+	this.ship.maxThrust=0.8*this.ship.len;
+	this.ship.maxSideThrust=.2*this.ship.len;
 
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].shape.center=new obrengine.Vector2d(this.asteroids[i].shape.center.x*xratio,
@@ -140,7 +140,7 @@ Map.prototype.resize=function (nw,nh){
 	this.w=nw;
 	this.h=nh;
 	this.mean=nmean;
-	this.ship.updateVertices;
+	this.ship.updateVertices();
 }
 
 Map.prototype.move=function(){
