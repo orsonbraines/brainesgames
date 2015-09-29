@@ -511,8 +511,8 @@ function setPower(){
 		
 		var delta=obrengine.subtractVectors(ntPos,otPos);
 		var theta=Math.atan2(delta.y,delta.x)-map.ship.angle;
-		var dx=delta.magnitude*Math.cos(theta);
-		var dy=delta.magnitude*Math.sin(theta);
+		var dx=delta.getMagnitude()*Math.cos(theta);
+		var dy=delta.getMagnitude()*Math.sin(theta);
 		var msens=3;
 		var ssens=2;
 		mainPwr=dx-msens;
@@ -525,7 +525,7 @@ function setPower(){
 		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
-	tstr="mp: "+mainPwr+" sp"+sidePwr;
+	tstr="mp: "+mainPwr+" sp: "+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
 }
