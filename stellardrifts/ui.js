@@ -177,6 +177,8 @@ function drawTouch(){
 			g.closePath();
 			g.fill();
 		}
+		g.fillStyle="#000000";
+		g.fillText("ship.v: "+map.ship.v);
 	}
 }
 
