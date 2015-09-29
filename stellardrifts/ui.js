@@ -223,11 +223,11 @@ function drawGame(){
 	g.fillText("score: "+map.score+" +"+map.pointsGained,5,0);
 	g.fillText("best : "+best,5,sFont);
 	//***draw debug string
-	g.fillStyle = textColour;
+/* 	g.fillStyle = textColour;
 	g.font=getFont(10);
 	g.textBaseline="top";
 	g.textAlign="right";
-	g.fillText(tstr,wid,0); 
+	g.fillText(tstr,wid,0);  */
 	//***
 	//draw power meters
 	g.fillStyle="rgba(200,200,200,0.7)";
@@ -525,7 +525,7 @@ function setPower(){
 		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
-	tstr="mp: "+mainPwr+" sp: "+sidePwr;
+	//tstr="mp: "+mainPwr+" sp: "+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
 }

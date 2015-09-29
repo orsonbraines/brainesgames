@@ -11,7 +11,7 @@ function Ship(pos,l){
 	this.momentOfInertia=5000;
 
 	this.maxThrust=0.8*l;
-	this.maxSideThrust=.2*l;
+	this.maxSideThrust=.12*l;
 	//thrust multiplier 0-1
 	this.pwr=0;
 	//thrust multiplier -1 - 1. positive is ccw, -ve cw
@@ -127,7 +127,7 @@ Map.prototype.resize=function (nw,nh){
 	this.ship.len=nmean/20;
 	this.ship.wid=this.ship.len/2;
 	this.ship.maxThrust=0.8*this.ship.len;
-	this.ship.maxSideThrust=.2*this.ship.len;
+	this.ship.maxSideThrust=.12*this.ship.len;
 
 	for(var i=0;i<this.asteroids.length;i++){
 		this.asteroids[i].shape.center=new obrengine.Vector2d(this.asteroids[i].shape.center.x*xratio,
