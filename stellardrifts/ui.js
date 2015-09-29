@@ -151,12 +151,6 @@ function draw(){
 }
 
 function drawTouch(){
- 	g.fillStyle = textColour;
-	g.font=getFont(sFont);
-	g.textBaseline="top";
-	g.textAlign="right";
-	g.fillText(tstr,wid,0); 
-	
 
 	if(inGame || inPause){
 		g.fillStyle= "rgba(255,255,255,0.7)";
@@ -228,12 +222,13 @@ function drawGame(){
 	g.textAlign="left";
 	g.fillText("score: "+map.score+" +"+map.pointsGained,5,0);
 	g.fillText("best : "+best,5,sFont);
-	//draw debug string
+	//***draw debug string
 	g.fillStyle = textColour;
 	g.font=getFont(10);
 	g.textBaseline="top";
 	g.textAlign="right";
 	g.fillText(tstr,wid,0); 
+	//***
 	//draw power meters
 	g.fillStyle="rgba(200,200,200,0.7)";
 	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y);
@@ -425,7 +420,7 @@ function gameLoop(){
 		//move ship
 		map.move();
 		updateAll();
-		tstr="ship.v"+map.ship.vel;
+		//tstr="ship.v"+map.ship.vel;
 		draw();
 		updateBest();
 	}
@@ -530,7 +525,7 @@ function setPower(){
 		if (sidePwr>10) sidePwr=10;
 		otPos.set(ntPos.x,ntPos.y);
 	}
-	//tstr="mp: "+mainPwr+" sp"+sidePwr;
+	tstr="mp: "+mainPwr+" sp"+sidePwr;
 	map.ship.pwr=mainPwr/10;
 	map.ship.sidePwr=sidePwr/10;
 }
