@@ -177,8 +177,6 @@ function drawTouch(){
 			g.closePath();
 			g.fill();
 		}
-		g.fillStyle="#000000";
-		g.fillText("ship.v: "+map.ship.v,50,50);
 	}
 }
 
@@ -230,6 +228,12 @@ function drawGame(){
 	g.textAlign="left";
 	g.fillText("score: "+map.score+" +"+map.pointsGained,5,0);
 	g.fillText("best : "+best,5,sFont);
+	//draw debug string
+	g.fillStyle = textColour;
+	g.font=getFont(10);
+	g.textBaseline="top";
+	g.textAlign="right";
+	g.fillText(tstr,wid,0); 
 	//draw power meters
 	g.fillStyle="rgba(200,200,200,0.7)";
 	g.fillRect(mpbRect.corner.x,mpbRect.corner.y,mpbRect.size.x,mpbRect.size.y);
@@ -421,6 +425,7 @@ function gameLoop(){
 		//move ship
 		map.move();
 		updateAll();
+		tstr="ship.v"+map.ship.vel;
 		draw();
 		updateBest();
 	}
