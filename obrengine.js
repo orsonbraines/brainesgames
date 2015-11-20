@@ -82,28 +82,6 @@ Geometry Section
 		this.p1=p1;
 		this.p2=p2;
 		this.dif=subtractVectors(p2,p1);
-/* 		if(p1.x!=p2.x){
-			if(p1.x<p2.x){
-				this.p1=p1;
-				this.p2=p2;
-			}
-			else{
-				this.p1=p2;
-				this.p2=p1;
-			}
-			this.slope=(this.p2.y-this.p1.y)/(this.p2.x-this.p1.x);
-		}
-		else{
-			if(p1.y<=p2.y){
-				this.p1=p1;
-				this.p2=p2;
-			}
-			else{
-				this.p1=p2;
-				this.p2=p1;
-			}
-			this.slope=NaN;
-		} */
 	}
 
 	obrengine.Line.prototype.toString=function (){
@@ -149,6 +127,13 @@ Geometry Section
 		}
 	}
 	
+	obrengine.Polygon.prototype.updateLines=function(){
+		for(var i=0;i<this.vertices.length;i++){
+			if(i==0) this.lines[i]=new Line(this.vertices[this.vertices.length-1],this.vertices[i]);
+			else this.lines[i]=new Line(this.vertices[i-1],this.vertices[i]);
+		}
+	}
+	
 	obrengine.Polygon.prototype.getCenter=function(){
 		var xt=0;
 		var yt=0;
@@ -185,72 +170,27 @@ Geometry Section
 					circle.center.x*circle.center.x+circle.center.y*circle.center.y-
 					circle.radius*circle.radius-2*
 					(line.p1.x*circle.center.x + line.p1.y*circle.center.y);
-			console.log("a: "+a);
-			console.log("b: "+b);
-			console.log("c: "+c);
 			var det=b*b-4*a*c;
-			console.log("det: "+det);
 			if(det<0) return false;
 			var t1=(-b+Math.sqrt(det))/(2*a);
 			var t2=(-b-Math.sqrt(det))/(2*a);
-			console.log("t1: "+t1);
-			console.log("t2: "+t2);
 			return t1>=0 && t1<=1 || t2>=0 && t2<=1;
-/* 			
-			if(line.p1.x == line.p2.x){
-				//vertical line
-				return (circle.inside(line.p1) || circle.inside(line.p2) ||
-				(Math.abs(line.p1.x-circle.center.x)<circle.radius && line.p1.y<circle.center.y 
-				&& circle.center.y<line.p2.y));
-			}
-			else if(line.p1.y==line.p2.y){
-				//horizontal line
-				return (circle.inside(line.p1) || circle.inside(line.p2) ||
-				(Math.abs(line.p1.y-circle.center.y)<circle.radius && line.p1.x<circle.center.x
-				&& circle.center.x<line.p2.x));
-			}
-			else{
-				if(circle.inside(line.p1) || circle.inside(line.p2)) return true;
-				
-				var cx=(line.slope*line.slope*line.p1.x + circle.center.x +
-				line.slope*(circle.center.y-line.p1.y))/
-				(line.slope*line.slope+1);
-				var closestPoint=new Vector2d(cx,line.slope*(cx-line.p1.x)+line.p1.y);
-				
-				return (circle.inside(closestPoint) && line.p1.x<closestPoint.x  && closestPoint.x<line.p2.x);
-			} */
 		}
 		else if(obj1 instanceof Line && obj2 instanceof Line){
 			if(obj1.dif.x==0){
 				if(obj1.dif.y==0 || obj2.dif.x==0)return false;
 				var t2=(obj1.p1.x-obj2.p1.x)/obj2.dif.x;
 				var t1=(obj2.p1.y-obj1.p1.y+t2*obj2.dif.y)/obj1.dif.y;
-				console.log("t1: "+t1);
-				console.log("t2: "+t2);
+
 				return t1>=0 && t1<=1 && t2>=0 && t2<=1;
 			}
 			var denom=obj2.dif.x * obj1.dif.y - obj2.dif.y * obj1.dif.x;
 			if (denom==0) return false;
 			var t2=(obj1.dif.x*(obj2.p1.y-obj1.p1.y)+obj1.dif.y*(obj1.p1.x-obj2.p1.x))/denom;
 			var t1=(obj2.p1.x-obj1.p1.x+t2*obj2.dif.x)/obj1.dif.x;
-			console.log("t1: "+t1);
-			console.log("t2: "+t2);
+
 			return t1>=0 && t1<=1 && t2>=0 && t2<=1;
-/* 			if(obj1.p1.x==obj1.p2.x || obj2.p1.x==obj2.p2.x){
-				if(obj1.p1.x==obj1.p2.x && obj2.p1.x==obj2.p2.x)return false;
-				var la,lb;
-				if(obj1.p1.x==obj1.p2.x) {lb=obj1;la=obj2;}
-				else {lb=obj2;la=obj1;}
-				
-				var yint=la.slope*(lb.p1.x-la.p1.x)+la.p1.y;
-				return (la.p1.x<lb.p1.x && lb.p1.x<la.p2.x) && (lb.p1.y<yint && yint<lb.p2.y);
-			}
-			else{
-				var la=obj1;
-				var lb=obj2;
-				var xint=(la.slope*la.p1.x + lb.p1.y - lb.slope*lb.p1.x -la.p1.y)/(la.slope-lb.slope);
-				return la.p1.x<xint && xint<la.p2.x && lb.p1.x<xint && xint<lb.p2.x;
-			} */
+
 		}
 		else if(obj1 instanceof Line && obj2 instanceof Polygon || obj1 instanceof Polygon && obj2 instanceof Line){
 			var l,p;
@@ -265,6 +205,21 @@ Geometry Section
 			
 			for(var i=0;i<p.lines.length;i++){
 				if(intersects(p.lines[i],l)) return true;
+			}
+			return false;
+		}
+		else if(obj1 instanceof Circle && obj2 instanceof Polygon || obj1 instanceof Polygon && obj2 instanceof Circle){
+			var c,p;
+			if(obj1 instanceof Circle){
+				c=obj1;
+				p=obj2;
+			}
+			else{
+				c=obj2;
+				p=obj1;
+			}
+			for(var i=0;i<p.lines.length;i++){
+				if(intersects(p.lines[i],c)) return true;
 			}
 			return false;
 		}
@@ -292,10 +247,129 @@ Geometry Section
 		}
 	}
 	
-	//returns null if no lines intersect or an array of booleans indicating which lines intersect
+	//returns an array of of the intersection points, or null if no intersection
 	obrengine.intersectsAt=function(obj1,obj2){
-		//TODO
-		return null;
+		if(obj1 instanceof Circle && obj2 instanceof Line  || obj2 instanceof Circle && obj1 instanceof Line){
+			var circle,line;
+			if(obj1 instanceof Circle){
+				circle=obj1;
+				line=obj2;
+			}
+			else{
+				circle=obj2;
+				line=obj1;
+			}
+			
+			var a=line.dif.x*line.dif.x+line.dif.y*line.dif.y;
+			var b=2*((line.p1.x-circle.center.x)*line.dif.x+(line.p1.y-circle.center.y)*line.dif.y);
+			var c=line.p1.x*line.p1.x+line.p1.y*line.p1.y+
+					circle.center.x*circle.center.x+circle.center.y*circle.center.y-
+					circle.radius*circle.radius-2*
+					(line.p1.x*circle.center.x + line.p1.y*circle.center.y);
+			var det=b*b-4*a*c;
+			if(det<0) return new Array(0);
+			var t1=(-b+Math.sqrt(det))/(2*a);
+			var t2=(-b-Math.sqrt(det))/(2*a);
+			var res=[];
+			if(t1>=0 && t1<=1)res[0]=addVectors(line.p1,scaleVector(line.dif,t1));
+			if(t2>=0 && t2<=1)res[res.length]=addVectors(line.p1,scaleVector(line.dif,t2));
+			//console.log("circle line:"+res);
+			return res;
+		}
+		else if(obj1 instanceof Circle && obj2 instanceof Polygon || obj1 instanceof Polygon && obj2 instanceof Circle){
+			var c,p;
+			if(obj1 instanceof Circle){
+				c=obj1;
+				p=obj2;
+			}
+			else{
+				c=obj2;
+				p=obj1;
+			}
+			var res=[];
+			for(var i=0;i<p.lines.length;i++){
+				res=res.concat(intersectsAt(p.lines[i],c));
+			}
+			//console.log("circle poly:"+res);
+			return res;
+		}
+		else{
+			console.log("not right shape");
+			return null;
+		}
+	}
+	
+	obrengine.collide=function(params1,params2,u,p){
+		//u is the direction from the first object to the second
+		u=u.toUnit();
+		
+		//no torque
+		//console.log("1.I"+params1.I);
+		//console.log("2.I"+params2.I);
+		if(params1.I==0 && params2.I==0){
+			var bounce=0.4;
+			var vri=subtractVectors(params1.v,params2.v);
+			var dp=dotProduct(vri,u);
+			if(dp>0){
+				var f=params1.m*params2.m*(1+bounce)*dp/(params1.m+params2.m);
+				var val={
+					"v1":subtractVectors(params1.v,scaleVector(u,f/params1.m)),
+					"v2":addVectors(params2.v,scaleVector(u,f/params2.m))
+				};
+				return val;
+			}
+			else{
+				//no change(should uncollide naturaly)
+				var val={
+					"v1":params1.v,
+					"v2":params2.v
+				};
+				return val;
+			}
+		}
+		//object1 with no torque object2 with  torque
+		else if(params1.I==0){
+			var bounce=0.4;
+			//vector from center of 2nd ob to point of collision
+			var r=subtractVectors(p,params2.c);
+			//direction of rotational motion
+			var thetaR=Math.atan2(r.y,r.x);
+			var thetaU=Math.atan2(u.y,u.x);
+			var wb=getUnitVector(thetaR+Math.PI/2);
+			var vri=subtractVectors(params1.v,addVectors(params2.v,scaleVector(wb,params2.w*r.getMagnitude())));
+			var dp=dotProduct(vri,u);
+			
+			if(dp>0){
+				//multiply by force to get the difference of vr due to linear motion
+				var lb=scaleVector(u,-(params1.m+params2.m)/(params1.m*params2.m));
+				
+				//multiply by force to get the difference of vr due to rotational motion
+				var rb=scaleVector(wb,-r.getMagnitude()*r.getMagnitude()*Math.sin(thetaU-thetaR)/params2.I);
+				//multiply by force to get delta vr
+				b=addVectors(lb,rb);
+				
+				
+				var f=-(1+bounce)*dp/(dotProduct(b,u));
+				var val={
+					"collide":true,
+					"v1":subtractVectors(params1.v,scaleVector(u,f/params1.m)),
+					"v2":addVectors(params2.v,scaleVector(u,f/params2.m)),
+					"w2":params2.w+f*r.getMagnitude()*Math.sin(thetaU-thetaR)/params2.I
+				};
+				return val;
+ 			}
+			else{
+				//no change(should uncollide naturaly)
+				var val={
+					"collide":false,
+					"v1":params1.v,
+					"v2":params2.v,
+					"w2":params2.w
+				};
+				return val;
+			}
+		}
+		//else console.log("I!=0");
 	}
 	
 	obrengine.collideCircles=function(circ1,m1,v1,circ2,m2,v2){	
